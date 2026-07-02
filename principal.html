@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!--
+  templates/principal.html
+  ==========================
+  CAPA: PRESENTATION -> Vista (View de MVVM)
+
+  Plantilla principal servida en GET /principal (protegida del lado
+  del cliente: ver el "guard" al inicio de static/js/view/PrincipalView.js,
+  que redirige a /login si no hay un token JWT valido en sessionStorage).
+
+  Conserva el mismo diseno y secciones del mockup original (Pagina
+  Principal, Subir Imagenes, Ver Resultados, Ver Historial,
+  Configuracion), mas un bloque nuevo de Gestion de Usuarios dentro de
+  Configuracion (visible solo para el rol admin), que cubre el
+  requerimiento administrativo del cronograma.
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cancer de Cuello Uterino</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-cabecera">
+      <div class="titulo-app">Cancer de Cuello Uterino</div>
+      <div class="subtitulo-app">Diagnostico de Imagenes</div>
+    </div>
+    <div class="sidebar-usuario">
+      <div class="avatar-chico" id="av-sidebar">U</div>
+      <div class="info-usuario">
+        <div class="nombre" id="sb-usuario">usuario</div>
+        <div class="rol" id="sb-rol">Medico</div>
+      </div>
+    </div>
+    <div class="nav-grupo">
+      <div class="nav-grupo-label">Menu</div>
+      <div class="nav-item activo" id="nav-home" onclick="navegar('home')">&#9632; Pagina Principal</div>
+      <div class="nav-item" id="nav-upload" onclick="navegar('upload')">&#8679; Subir Imagenes</div>
+      <div class="nav-item" id="nav-results" onclick="navegar('results')">&#9654; Ver Resultados</div>
+      <div class="nav-item" id="nav-history" onclick="navegar('history')">&#9685; Ver Historial</div>
+    </div>
+    <div class="nav-grupo" style="margin-top: 6px;">
+      <div class="nav-grupo-label">Sistema</div>
+      <div class="nav-item" id="nav-config" onclick="navegar('config')">&#9881; Configuracion</div>
+    </div>
+    <div class="nav-abajo">
+      <div class="nav-item" id="btn-cerrar-sesion">&#10148; Cerrar Sesion</div>
+    </div>
+    <div class="pie-sidebar">Game Desing</div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="contenido-principal">
+
+    <!-- HOME -->
+    <div id="sec-home">
+      <div class="barra-top"><h1>Pagina Principal</h1></div>
+      <div class="area-contenido">
+        <div class="banner-bienvenida">
+          <h2>Bienvenido, <span id="banner-nombre">usuario</span></h2>
+          <p>Sistema de analisis de imagenes cervicales para apoyo al diagnostico medico.</p>
+        </div>
+
+        <div class="titulo-seccion">Tipos de Celulas</div>
+        <div class="grid-tipos">
+          <div class="tarjeta-tipo"><div class="tipo-nombre">Parabasal</div><div class="tipo-desc">Celulas basales</div></div>
+          <div class="tarjeta-tipo"><div class="tipo-nombre">Superficial/Intermedia</div><div class="tipo-desc">Capa externa</div></div>
+          <div class="tarjeta-tipo"><div class="tipo-nombre">Metaplasica</div><div class="tipo-desc">Transformacion</div></div>
+          <div class="tarjeta-tipo"><div class="tipo-nombre">Koilocitotica</div><div class="tipo-desc">Asociado VPH</div></div>
+          <div class="tarjeta-tipo"><div class="tipo-nombre">Disqueratosica</div><div class="tipo-desc">Queratinizacion</div></div>
+        </div>
+
+        <div class="titulo-seccion">Acciones Rapidas</div>
+        <div class="grid-acciones">
+          <div class="tarjeta-accion" onclick="navegar('upload')">
+            <div class="icono-accion">&#8679;</div>
+            <div><div class="a-titulo">Subir Imagenes</div><div class="a-desc">Carga imagenes para analizar</div></div>
+          </div>
+          <div class="tarjeta-accion" onclick="navegar('results')">
+            <div class="icono-accion">&#9654;</div>
+            <div><div class="a-titulo">Ver Resultados</div><div class="a-desc">Revisa los ultimos analisis</div></div>
+          </div>
+          <div class="tarjeta-accion" onclick="navegar('history')">
+            <div class="icono-accion">&#9685;</div>
+            <div><div class="a-titulo">Historial</div><div class="a-desc">Registro de analisis anteriores</div></div>
+          </div>
+          <div class="tarjeta-accion" onclick="navegar('config')">
+            <div class="icono-accion">&#9881;</div>
+            <div><div class="a-titulo">Configuracion</div><div class="a-desc">Ajusta la aplicacion</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SUBIR IMAGENES -->
+    <div id="sec-upload" style="display:none">
+      <div class="barra-top"><h1>Cargar Imagenes</h1></div>
+      <div class="area-contenido">
+        <div class="zona-carga" id="zonaArrastrar">
+          <div class="flecha">&#8679;</div>
+          <h3>Arrastra imagenes aqui</h3>
+          <p>o <span class="enlace">haz clic para seleccionar</span></p>
+          <p style="margin-top:6px; font-size:10px; color:#a09080">PNG, JPG, TIFF - maximo 20 MB</p>
+        </div>
+        <input type="file" id="inputArchivo" multiple accept="image/*" style="display:none">
+
+        <div class="barra-progreso-wrap" id="barraWrap">
+          <div class="barra-progreso-inner" id="barraInner"></div>
+        </div>
+
+        <div class="grid-previews" id="gridPreview"></div>
+
+        <div id="secAnalizar" style="display:none">
+          <button class="btn-analizar" id="btn-analizar-imagenes">&#9654; Analizar Imagenes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- RESULTADOS -->
+    <div id="sec-results" style="display:none">
+      <div class="barra-top"><h1>Resultados</h1></div>
+      <div class="area-contenido" id="contenido-resultados"></div>
+    </div>
+
+    <!-- HISTORIAL -->
+    <div id="sec-history" style="display:none">
+      <div class="barra-top"><h1>Historial</h1></div>
+      <div class="area-contenido" id="contenido-historial"></div>
+    </div>
+
+    <!-- CONFIGURACION -->
+    <div id="sec-config" style="display:none">
+      <div class="barra-top"><h1>Configuracion</h1></div>
+      <div class="area-contenido">
+
+        <div class="config-bloque">
+          <div class="config-bloque-titulo">Configuracion del usuario</div>
+          <div class="config-fila">
+            <div>
+              <div class="config-label">Foto de perfil</div>
+              <div class="config-desc">Cambia tu imagen de perfil</div>
+            </div>
+            <div class="avatar-config">
+              <div class="avatar-grande" id="av-grande">U</div>
+              <button class="btn-secundario" onclick="document.getElementById('inputAvatar').click()">Cambiar imagen de perfil</button>
+              <input type="file" id="inputAvatar" accept="image/*" style="display:none">
+            </div>
+          </div>
+          <div class="config-fila">
+            <div>
+              <div class="config-label">Nombre de usuario</div>
+              <div class="config-desc" id="config-nombre-usuario">usuario</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="config-bloque">
+          <div class="config-bloque-titulo">Configuracion de la pagina</div>
+          <div class="config-fila">
+            <div>
+              <div class="config-label">Modo Oscuro</div>
+              <div class="config-desc">Activar o desactivar el tema oscuro</div>
+            </div>
+            <div class="toggle" id="toggleTema"></div>
+          </div>
+          <div class="config-fila">
+            <div>
+              <div class="config-label">Modo Claro</div>
+              <div class="config-desc">Activar el tema claro</div>
+            </div>
+            <div class="toggle on" id="toggleClaro"></div>
+          </div>
+          <div class="config-fila">
+            <div>
+              <div class="config-label">Tamano de fuente</div>
+              <div class="config-desc">Ajusta el tamano del texto</div>
+            </div>
+            <div class="control-fuente">
+              <button class="btn-fuente" id="btn-fuente-menos">-</button>
+              <span class="val-fuente" id="valFuente">14</span>
+              <button class="btn-fuente" id="btn-fuente-mas">+</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- GESTION DE USUARIOS (solo admin) - mantenimiento/permisos exigido en el cronograma -->
+        <div class="config-bloque" id="bloque-admin" style="display:none;">
+          <div class="config-bloque-titulo">Gestion de Usuarios (Administrador)</div>
+          <div style="padding: 14px 18px;">
+            <form id="form-admin-crear-usuario" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+              <input type="text" id="admin-nuevo-usuario" placeholder="nombre de usuario" required
+                     style="flex:1; min-width:140px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+              <input type="password" id="admin-nueva-contrasena" placeholder="contrasena" required
+                     style="flex:1; min-width:140px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+              <select id="admin-nuevo-rol" style="padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+                <option value="medico">Medico</option>
+                <option value="admin">Administrador</option>
+              </select>
+              <button type="submit" class="btn-principal" style="width:auto; padding:8px 16px;">Crear usuario</button>
+            </form>
+            <p id="admin-error" style="color:#a02020; font-size:12px; margin-bottom:10px;"></p>
+            <div id="tabla-admin-usuarios"></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- fin contenido-principal -->
+</div><!-- fin app-layout -->
+
+<!-- TOAST -->
+<div class="toast" id="toast">Operacion exitosa</div>
+
+<script src="js/model/ApiClient.js"></script>
+<script src="js/model/AuthModel.js"></script>
+<script src="js/model/AnalisisModel.js"></script>
+<script src="js/model/AdminModel.js"></script>
+<script src="js/viewmodel/UploadViewModel.js"></script>
+<script src="js/viewmodel/ResultsViewModel.js"></script>
+<script src="js/viewmodel/HistoryViewModel.js"></script>
+<script src="js/viewmodel/ConfigViewModel.js"></script>
+<script src="js/viewmodel/AdminViewModel.js"></script>
+<script src="js/view/PrincipalView.js"></script>
+</body>
+</html>

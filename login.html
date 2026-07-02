@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesion - Cancer de Cuello Uterino</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<div class="auth-bg">
+  <div class="auth-box">
+    <div class="logo-area">
+      <div class="icono"><span>C</span></div>
+      <div class="nombre-app">Sistema de Diagnostico</div>
+    </div>
+    <h2>Iniciar Sesion</h2>
+    <div class="subtitulo">Ingresa tus datos para continuar</div>
+
+    <form id="form-login">
+      <div class="campo">
+        <label>Usuario</label>
+        <input type="text" id="inp-usuario" placeholder="nombre de usuario" autocomplete="username" required>
+      </div>
+      <div class="campo">
+        <label>Contrasena</label>
+        <input type="password" id="inp-pass" placeholder="contrasena" autocomplete="current-password" required>
+      </div>
+
+      <p id="login-error" style="display:none; color:#a02020; font-size:12px; margin-bottom:10px;"></p>
+
+      <div class="check-row">
+        <label><input type="checkbox" checked> Recordarme</label>
+        <a>Olvide mi contrasena</a>
+      </div>
+      <button type="submit" class="btn-principal" id="btn-ingresar">Ingresar</button>
+    </form>
+
+    <div class="auth-link">No tienes cuenta? <a href="registro.html">Crear cuenta</a></div>
+
+    <p style="margin-top:16px; font-size:10px; color:#a09080; text-align:center;">
+      Usuario de prueba: <strong>admin</strong> &nbsp;|&nbsp; Contrasena: <strong>1234</strong>
+    </p>
+  </div>
+</div>
+
+<script src="js/model/ApiClient.js"></script>
+<script src="js/model/AuthModel.js"></script>
+<script src="js/viewmodel/LoginViewModel.js"></script>
+<script src="js/view/LoginView.js"></script>
+</body>
+</html>
