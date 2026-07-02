@@ -9,7 +9,7 @@
 const ApiClient = {
   // URL base del backend en Render.
 
-  BASE_URL: "https://backend-render-zl0j.onrender.com",
+  BASE_URL: "https://pa2-backend-e3.onrender.com",
 
   async solicitarJSON(ruta, { metodo = "GET", cuerpo = null, autenticado = false } = {}) {
     const encabezados = { "Content-Type": "application/json" };
