@@ -27,10 +27,10 @@ class AdminViewModel {
     this.cargando = false;
   }
 
-  async crearUsuario(nombreUsuario, contrasena, rol) {
+  async crearUsuario(nombreUsuario, contrasena, rol, correo) {
     this.mensajeError = "";
     try {
-      await AdminModel.crearUsuario(nombreUsuario, contrasena, rol);
+      await AdminModel.crearUsuario(nombreUsuario, contrasena, rol, correo);
       await this.cargarUsuarios();
       return true;
     } catch (error) {

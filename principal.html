@@ -8,11 +8,14 @@
   del cliente: ver el "guard" al inicio de static/js/view/PrincipalView.js,
   que redirige a /login si no hay un token JWT valido en sessionStorage).
 
-  Conserva el mismo diseno y secciones del mockup original (Pagina
-  Principal, Subir Imagenes, Ver Resultados, Ver Historial,
-  Configuracion), mas un bloque nuevo de Gestion de Usuarios dentro de
-  Configuracion (visible solo para el rol admin), que cubre el
-  requerimiento administrativo del cronograma.
+  Secciones: Pagina Principal (con estadisticas reales e informacion
+  sobre tipos de cancer), Nuevo Expediente (antes "Subir Imagenes",
+  ahora crea expedientes clinicos reales via /api/expedientes), Ver
+  Resultados (resumen de la ultima tanda analizada), Expedientes
+  (antes "Historial", ahora lista los expedientes REALES persistidos
+  en la base de datos, con control de accesos: cada medico ve solo
+  los suyos, el admin los ve todos), y Configuracion (con Gestion de
+  Usuarios para el rol admin).
 -->
 <html lang="es">
 <head>
@@ -28,8 +31,8 @@
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="sidebar-cabecera">
-      <div class="titulo-app">Cancer de Cuello Uterino</div>
-      <div class="subtitulo-app">Diagnostico de Imagenes</div>
+      <div class="titulo-app">Clinica Vida Nueva</div>
+      <div class="subtitulo-app">Unidad de Patologia Cervical</div>
     </div>
     <div class="sidebar-usuario">
       <div class="avatar-chico" id="av-sidebar">U</div>
@@ -41,9 +44,9 @@
     <div class="nav-grupo">
       <div class="nav-grupo-label">Menu</div>
       <div class="nav-item activo" id="nav-home" onclick="navegar('home')">&#9632; Pagina Principal</div>
-      <div class="nav-item" id="nav-upload" onclick="navegar('upload')">&#8679; Subir Imagenes</div>
+      <div class="nav-item" id="nav-upload" onclick="navegar('upload')">&#8679; Nuevo Expediente</div>
       <div class="nav-item" id="nav-results" onclick="navegar('results')">&#9654; Ver Resultados</div>
-      <div class="nav-item" id="nav-history" onclick="navegar('history')">&#9685; Ver Historial</div>
+      <div class="nav-item" id="nav-history" onclick="navegar('history')">&#9685; Expedientes</div>
     </div>
     <div class="nav-grupo" style="margin-top: 6px;">
       <div class="nav-grupo-label">Sistema</div>
@@ -52,7 +55,7 @@
     <div class="nav-abajo">
       <div class="nav-item" id="btn-cerrar-sesion">&#10148; Cerrar Sesion</div>
     </div>
-    <div class="pie-sidebar">Game Desing</div>
+    <div class="pie-sidebar">Sistema de apoyo diagnostico &middot; No reemplaza el criterio clinico</div>
   </div>
 
   <!-- MAIN -->
@@ -67,7 +70,27 @@
           <p>Sistema de analisis de imagenes cervicales para apoyo al diagnostico medico.</p>
         </div>
 
-        <div class="titulo-seccion">Tipos de Celulas</div>
+        <div class="titulo-seccion">Resumen de tu actividad</div>
+        <div class="grid-stats" id="gridEstadisticas">
+          <div class="tarjeta-stat">
+            <div class="stat-valor" id="stat-total">0</div>
+            <div class="stat-label">Expedientes registrados</div>
+          </div>
+          <div class="tarjeta-stat stat-normal">
+            <div class="stat-valor" id="stat-normal">0</div>
+            <div class="stat-label">Clasificados como Normal</div>
+          </div>
+          <div class="tarjeta-stat stat-revisar">
+            <div class="stat-valor" id="stat-revisar">0</div>
+            <div class="stat-label">Requieren seguimiento</div>
+          </div>
+          <div class="tarjeta-stat stat-positivo">
+            <div class="stat-valor" id="stat-positivo">0</div>
+            <div class="stat-label">Hallazgos relevantes</div>
+          </div>
+        </div>
+
+        <div class="titulo-seccion">Tipos de Celulas (dataset SIPaKMeD)</div>
         <div class="grid-tipos">
           <div class="tarjeta-tipo"><div class="tipo-nombre">Parabasal</div><div class="tipo-desc">Celulas basales</div></div>
           <div class="tarjeta-tipo"><div class="tipo-nombre">Superficial/Intermedia</div><div class="tipo-desc">Capa externa</div></div>
@@ -76,11 +99,65 @@
           <div class="tarjeta-tipo"><div class="tipo-nombre">Disqueratosica</div><div class="tipo-desc">Queratinizacion</div></div>
         </div>
 
+        <div class="titulo-seccion">Informacion sobre otros tipos de cancer</div>
+        <div class="grid-cancer-info">
+
+          <div class="tarjeta-cancer">
+            <div class="cancer-icono">
+              <svg viewBox="0 0 64 64"><path d="M32 4c-4 10-14 14-14 24a14 14 0 0028 0c0-10-10-14-14-24z" fill="#c8a97a"/><path d="M22 30l-6 26 16-10 16 10-6-26z" fill="#a07850"/></svg>
+            </div>
+            <div class="cancer-nombre">Cancer de Mama</div>
+            <div class="cancer-desc">Uno de los canceres mas frecuentes en mujeres a nivel mundial. La deteccion temprana mediante autoexamen y mamografia periodica mejora significativamente el pronostico.</div>
+          </div>
+
+          <div class="tarjeta-cancer">
+            <div class="cancer-icono">
+              <svg viewBox="0 0 64 64"><path d="M32 4c-4 10-14 14-14 24a14 14 0 0028 0c0-10-10-14-14-24z" fill="#8fae8b"/><path d="M22 30l-6 26 16-10 16 10-6-26z" fill="#6a8a66"/></svg>
+            </div>
+            <div class="cancer-nombre">Cancer de Prostata</div>
+            <div class="cancer-desc">Frecuente en hombres mayores de 50 anos. Suele crecer lentamente y puede detectarse con examenes de antigeno prostatico (PSA) y evaluacion clinica.</div>
+          </div>
+
+          <div class="tarjeta-cancer">
+            <div class="cancer-icono">
+              <svg viewBox="0 0 64 64"><path d="M32 4c-4 10-14 14-14 24a14 14 0 0028 0c0-10-10-14-14-24z" fill="#a8938a"/><path d="M22 30l-6 26 16-10 16 10-6-26z" fill="#7d6a62"/></svg>
+            </div>
+            <div class="cancer-nombre">Cancer de Pulmon</div>
+            <div class="cancer-desc">Fuertemente asociado al consumo de tabaco y a la exposicion prolongada a contaminantes. Los sintomas suelen aparecer en etapas avanzadas, por lo que la prevencion es clave.</div>
+          </div>
+
+          <div class="tarjeta-cancer">
+            <div class="cancer-icono">
+              <svg viewBox="0 0 64 64"><path d="M32 4c-4 10-14 14-14 24a14 14 0 0028 0c0-10-10-14-14-24z" fill="#c99a6a"/><path d="M22 30l-6 26 16-10 16 10-6-26z" fill="#a5793f"/></svg>
+            </div>
+            <div class="cancer-nombre">Cancer Colorrectal</div>
+            <div class="cancer-desc">Relacionado con la dieta, el sedentarismo y los antecedentes familiares. La colonoscopia permite detectar y retirar polipos antes de que se vuelvan malignos.</div>
+          </div>
+
+          <div class="tarjeta-cancer">
+            <div class="cancer-icono">
+              <svg viewBox="0 0 64 64"><path d="M32 4c-4 10-14 14-14 24a14 14 0 0028 0c0-10-10-14-14-24z" fill="#b58aa0"/><path d="M22 30l-6 26 16-10 16 10-6-26z" fill="#8f6480"/></svg>
+            </div>
+            <div class="cancer-nombre">Melanoma (Piel)</div>
+            <div class="cancer-desc">Asociado a la exposicion solar excesiva y a quemaduras solares durante la ninez. Vigilar cambios de forma, color o tamano en lunares ayuda a una deteccion temprana.</div>
+          </div>
+
+          <div class="tarjeta-cancer">
+            <div class="cancer-icono">
+              <svg viewBox="0 0 64 64"><path d="M32 4c-4 10-14 14-14 24a14 14 0 0028 0c0-10-10-14-14-24z" fill="#a07850"/><path d="M22 30l-6 26 16-10 16 10-6-26z" fill="#7a5a3a"/></svg>
+            </div>
+            <div class="cancer-nombre">Cancer de Cuello Uterino</div>
+            <div class="cancer-desc">Causado principalmente por la infeccion persistente del VPH. Es uno de los canceres mas prevenibles: la vacunacion y las pruebas citologicas periodicas (como las que apoya este sistema) reducen fuertemente el riesgo.</div>
+          </div>
+
+        </div>
+        <p class="nota-informativa">Esta informacion es unicamente educativa y de caracter general; no reemplaza una consulta con un profesional de la salud.</p>
+
         <div class="titulo-seccion">Acciones Rapidas</div>
         <div class="grid-acciones">
           <div class="tarjeta-accion" onclick="navegar('upload')">
             <div class="icono-accion">&#8679;</div>
-            <div><div class="a-titulo">Subir Imagenes</div><div class="a-desc">Carga imagenes para analizar</div></div>
+            <div><div class="a-titulo">Nuevo Expediente</div><div class="a-desc">Registra un paciente y analiza su imagen</div></div>
           </div>
           <div class="tarjeta-accion" onclick="navegar('results')">
             <div class="icono-accion">&#9654;</div>
@@ -88,7 +165,7 @@
           </div>
           <div class="tarjeta-accion" onclick="navegar('history')">
             <div class="icono-accion">&#9685;</div>
-            <div><div class="a-titulo">Historial</div><div class="a-desc">Registro de analisis anteriores</div></div>
+            <div><div class="a-titulo">Expedientes</div><div class="a-desc">Historial clinico de tus pacientes</div></div>
           </div>
           <div class="tarjeta-accion" onclick="navegar('config')">
             <div class="icono-accion">&#9881;</div>
@@ -98,10 +175,42 @@
       </div>
     </div>
 
-    <!-- SUBIR IMAGENES -->
+    <!-- NUEVO EXPEDIENTE (antes "Subir Imagenes") -->
     <div id="sec-upload" style="display:none">
-      <div class="barra-top"><h1>Cargar Imagenes</h1></div>
+      <div class="barra-top"><h1>Nuevo Expediente</h1></div>
       <div class="area-contenido">
+
+        <div class="config-bloque" style="margin-bottom:18px;">
+          <div class="config-bloque-titulo">Datos del paciente</div>
+          <form id="form-datos-paciente" class="form-paciente">
+            <div class="campo">
+              <label>Nombre completo *</label>
+              <input type="text" id="pac-nombre" placeholder="Ej: Maria Fernanda Rojas" required>
+            </div>
+            <div class="campo">
+              <label>Numero de documento *</label>
+              <input type="text" id="pac-documento" placeholder="DNI / Carnet de extranjeria" required>
+            </div>
+            <div class="campo">
+              <label>Fecha de nacimiento</label>
+              <input type="date" id="pac-nacimiento">
+            </div>
+            <div class="campo campo-ancho">
+              <label>Historial ginecologico</label>
+              <input type="text" id="pac-historial" placeholder="Ej: G2P2, sin antecedentes relevantes, ultima citologia hace 2 anos">
+            </div>
+            <div class="campo campo-ancho">
+              <label>Sintomas actuales</label>
+              <input type="text" id="pac-sintomas" placeholder="Ej: Sangrado irregular, flujo anormal, dolor pelvico">
+            </div>
+            <div class="campo campo-ancho">
+              <label>Observaciones clinicas</label>
+              <input type="text" id="pac-observaciones" placeholder="Notas adicionales del medico tratante">
+            </div>
+          </form>
+          <p style="padding: 0 18px 14px; font-size:11px; color:#8a7560;">* Campos obligatorios. Estos datos se guardaran junto con cada imagen que analices a continuacion.</p>
+        </div>
+
         <div class="zona-carga" id="zonaArrastrar">
           <div class="flecha">&#8679;</div>
           <h3>Arrastra imagenes aqui</h3>
@@ -116,8 +225,10 @@
 
         <div class="grid-previews" id="gridPreview"></div>
 
+        <p id="upload-error" style="display:none; color:#a02020; font-size:12px; margin-bottom:10px;"></p>
+
         <div id="secAnalizar" style="display:none">
-          <button class="btn-analizar" id="btn-analizar-imagenes">&#9654; Analizar Imagenes</button>
+          <button class="btn-analizar" id="btn-analizar-imagenes">&#9654; Analizar y Guardar Expediente</button>
         </div>
       </div>
     </div>
@@ -128,9 +239,12 @@
       <div class="area-contenido" id="contenido-resultados"></div>
     </div>
 
-    <!-- HISTORIAL -->
+    <!-- EXPEDIENTES (antes "Historial") -->
     <div id="sec-history" style="display:none">
-      <div class="barra-top"><h1>Historial</h1></div>
+      <div class="barra-top">
+        <h1>Expedientes</h1>
+        <input type="text" id="buscador-expedientes" class="input-buscar" placeholder="Buscar por paciente, documento o codigo...">
+      </div>
       <div class="area-contenido" id="contenido-historial"></div>
     </div>
 
@@ -156,6 +270,18 @@
             <div>
               <div class="config-label">Nombre de usuario</div>
               <div class="config-desc" id="config-nombre-usuario">usuario</div>
+            </div>
+          </div>
+          <div class="config-fila">
+            <div style="flex:1;">
+              <div class="config-label">Correo de notificaciones</div>
+              <div class="config-desc">Se usa para avisarte por email cuando un analisis termina con exito</div>
+              <form id="form-correo-usuario" style="display:flex; gap:8px; margin-top:8px; max-width:420px;">
+                <input type="email" id="config-correo-input" placeholder="tu_correo@gmail.com"
+                       style="flex:1; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+                <button type="submit" class="btn-secundario" style="white-space:nowrap;">Guardar correo</button>
+              </form>
+              <p id="correo-mensaje" style="font-size:11px; margin-top:6px;"></p>
             </div>
           </div>
         </div>
@@ -198,6 +324,8 @@
                      style="flex:1; min-width:140px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
               <input type="password" id="admin-nueva-contrasena" placeholder="contrasena" required
                      style="flex:1; min-width:140px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+              <input type="email" id="admin-nuevo-correo" placeholder="correo (opcional, para notificaciones)"
+                     style="flex:1; min-width:180px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
               <select id="admin-nuevo-rol" style="padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
                 <option value="medico">Medico</option>
                 <option value="admin">Administrador</option>
@@ -215,6 +343,17 @@
   </div><!-- fin contenido-principal -->
 </div><!-- fin app-layout -->
 
+<!-- MODAL DE EXPEDIENTE -->
+<div class="modal-overlay" id="modalExpediente" style="display:none;">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="modalTitulo">Expediente</h2>
+      <span class="modal-cerrar" id="btnCerrarModal">&times;</span>
+    </div>
+    <div class="modal-body" id="modalCuerpo"></div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast">Operacion exitosa</div>
 
@@ -222,9 +361,10 @@
 <script src="js/model/AuthModel.js"></script>
 <script src="js/model/AnalisisModel.js"></script>
 <script src="js/model/AdminModel.js"></script>
+<script src="js/model/ExpedientesModel.js"></script>
 <script src="js/viewmodel/UploadViewModel.js"></script>
 <script src="js/viewmodel/ResultsViewModel.js"></script>
-<script src="js/viewmodel/HistoryViewModel.js"></script>
+<script src="js/viewmodel/ExpedientesViewModel.js"></script>
 <script src="js/viewmodel/ConfigViewModel.js"></script>
 <script src="js/viewmodel/AdminViewModel.js"></script>
 <script src="js/view/PrincipalView.js"></script>

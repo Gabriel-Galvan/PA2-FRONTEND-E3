@@ -39,6 +39,26 @@ const AuthModel = {
     sessionStorage.removeItem(this.CLAVE_USUARIO);
   },
 
+  /**
+   * Permite que el propio usuario (medico o admin) configure su correo
+   * de notificaciones desde Configuracion, sin depender de un admin.
+   * Actualiza tambien la copia en sessionStorage para que el resto de
+   * la app (banner, config) refleje el cambio sin recargar la pagina.
+   */
+  async actualizarCorreo(correo) {
+    const datos = await ApiClient.solicitarJSON("/api/perfil/correo", {
+      metodo: "PATCH",
+      autenticado: true,
+      cuerpo: { correo: correo },
+    });
+    const usuario = this.obtenerUsuario();
+    if (usuario) {
+      usuario.correo = datos.correo;
+      sessionStorage.setItem(this.CLAVE_USUARIO, JSON.stringify(usuario));
+    }
+    return datos.correo;
+  },
+
   obtenerToken() {
     return sessionStorage.getItem(this.CLAVE_TOKEN);
   },

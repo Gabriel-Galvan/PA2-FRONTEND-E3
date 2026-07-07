@@ -576,4 +576,195 @@
     .sidebar { display: none; }
     .grid-tipos { grid-template-columns: repeat(2, 1fr); }
     .grid-acciones { grid-template-columns: 1fr; }
+
   }
+/* =====================================================================
+   MODULO DE EXPEDIENTES / DASHBOARD / INFO DE CANCER
+   =====================================================================
+   Estilos anadidos para: tarjetas de estadisticas en la Pagina
+   Principal, tarjetas informativas de otros tipos de cancer, el
+   formulario de datos del paciente en "Nuevo Expediente", el buscador
+   de la pantalla Expedientes, y el modal de detalle/edicion de un
+   expediente. Se mantiene la misma paleta calida (beige/marron) del
+   resto del sistema para que se sienta como una sola aplicacion.
+   ===================================================================== */
+
+/* ---- DASHBOARD DE ESTADISTICAS (Pagina Principal) ---- */
+.grid-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.tarjeta-stat {
+  background-color: #faf6f0;
+  border: 1px solid #c9b99a;
+  border-left: 4px solid #a07850;
+  padding: 14px 16px;
+}
+.tarjeta-stat .stat-valor { font-size: 24px; font-weight: bold; color: #3d2e1e; line-height: 1.2; }
+.tarjeta-stat .stat-label { font-size: 11px; color: #8a7560; margin-top: 4px; }
+.tarjeta-stat.stat-normal { border-left-color: #6a9048; }
+.tarjeta-stat.stat-revisar { border-left-color: #b98a20; }
+.tarjeta-stat.stat-positivo { border-left-color: #a03828; }
+
+/* ---- INFORMACION SOBRE TIPOS DE CANCER (Pagina Principal) ---- */
+.grid-cancer-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.tarjeta-cancer {
+  background-color: #faf6f0;
+  border: 1px solid #c9b99a;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.tarjeta-cancer .cancer-icono { width: 40px; height: 40px; }
+.tarjeta-cancer .cancer-icono svg { width: 100%; height: 100%; }
+.tarjeta-cancer .cancer-nombre { font-size: 13px; font-weight: bold; color: #3d2e1e; }
+.tarjeta-cancer .cancer-desc { font-size: 11.5px; color: #6a5840; line-height: 1.5; }
+.nota-informativa {
+  font-size: 11px;
+  color: #a09080;
+  font-style: italic;
+  margin: 10px 0 24px;
+}
+
+/* ---- FORMULARIO DE DATOS DEL PACIENTE (Nuevo Expediente) ---- */
+.form-paciente {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0 16px;
+  padding: 14px 18px 0;
+}
+.form-paciente .campo { margin-bottom: 14px; }
+.form-paciente .campo-ancho { grid-column: 1 / -1; }
+.form-paciente .campo input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #c9b99a;
+  background-color: #fdf9f4;
+  color: #3d2e1e;
+  font-size: 13px;
+  font-family: inherit;
+  outline: none;
+}
+.form-paciente .campo input:focus { border-color: #a07850; }
+
+/* ---- TARJETA DE EXPEDIENTE CLICKEABLE (pantalla Expedientes) ---- */
+.tarjeta-resultado.clickeable { cursor: pointer; transition: border-color 0.15s, transform 0.1s; }
+.tarjeta-resultado.clickeable:hover { border-color: #a07850; }
+.expediente-codigo { font-size: 10px; color: #a09080; text-transform: uppercase; letter-spacing: 0.5px; }
+.expediente-doctor { font-size: 10px; color: #8a7560; margin-top: 2px; }
+
+/* ---- BUSCADOR DE EXPEDIENTES ---- */
+.input-buscar {
+  padding: 7px 12px;
+  border: 1px solid #c9b99a;
+  background-color: #fdf9f4;
+  color: #3d2e1e;
+  font-family: inherit;
+  font-size: 12px;
+  width: 260px;
+  outline: none;
+}
+.input-buscar:focus { border-color: #a07850; }
+
+/* ---- MODAL DE EXPEDIENTE ---- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(30, 24, 16, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+.modal-box {
+  background-color: #f0ebe3;
+  border: 1px solid #c9b99a;
+  width: 100%;
+  max-width: 640px;
+  max-height: 88vh;
+  overflow-y: auto;
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background-color: #e8dece;
+  border-bottom: 1px solid #c9b99a;
+  position: sticky;
+  top: 0;
+}
+.modal-header h2 { font-size: 15px; font-weight: normal; color: #3d2e1e; }
+.modal-cerrar { cursor: pointer; font-size: 20px; color: #8a7560; line-height: 1; }
+.modal-cerrar:hover { color: #3d2e1e; }
+.modal-body { padding: 18px 20px; }
+
+.expediente-imagen-grande {
+  width: 100%;
+  max-height: 260px;
+  background-color: #e8dece;
+  border: 1px solid #ddd0bc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  margin-bottom: 14px;
+  color: #a09080;
+  font-size: 12px;
+}
+.expediente-imagen-grande img { width: 100%; height: 100%; object-fit: contain; }
+
+.expediente-detalle-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0 16px;
+  margin-bottom: 10px;
+}
+.expediente-detalle-grid .campo-ancho { grid-column: 1 / -1; }
+
+.expediente-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid #ddd0bc;
+}
+
+.mensaje-correo-estado {
+  font-size: 11px;
+  padding: 6px 10px;
+  margin: 10px 0;
+  border-left: 3px solid #a07850;
+  background-color: #f0e8dc;
+  color: #6a5840;
+}
+
+/* ---- IMPRESION DE EXPEDIENTE (boton "Imprimir" del modal) ---- */
+@media print {
+  .sidebar, .barra-top, .toast, .modal-cerrar, .no-imprimir { display: none !important; }
+  .modal-overlay { position: static; background: none; padding: 0; }
+  .modal-box { max-width: 100%; max-height: none; box-shadow: none; border: none; }
+  body { background-color: #fff; }
+}
+
+@media (max-width: 900px) {
+  .grid-stats { grid-template-columns: repeat(2, 1fr); }
+  .grid-cancer-info { grid-template-columns: repeat(2, 1fr); }
+  .form-paciente { grid-template-columns: 1fr; }
+  .expediente-detalle-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 650px) {
+  .grid-stats { grid-template-columns: 1fr; }
+  .grid-cancer-info { grid-template-columns: 1fr; }
+}

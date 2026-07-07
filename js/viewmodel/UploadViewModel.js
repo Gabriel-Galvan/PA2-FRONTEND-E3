@@ -3,16 +3,18 @@
    =====================================================================
    CAPA: VIEWMODEL
    --------------------------------
-   Mantiene la lista de imagenes seleccionadas por el usuario y
-   orquesta el envio de cada una al backend real (PB-10/PB-11),
-   reemplazando la barra de progreso "falsa" (setInterval con numeros
-   aleatorios) del mockup original por el progreso REAL de analizar
-   cada imagen una por una contra la API.
+   Antes este ViewModel solo mandaba la imagen a /api/analizar y
+   guardaba el resultado EN MEMORIA (se perdia al recargar la pagina).
 
-   Los resultados quedados aqui son leidos despues por
-   ResultsViewModel e HistoryViewModel (en memoria; la persistencia en
-   base de datos del historial se hara en una siguiente iteracion del
-   proyecto, tal como se acordo).
+   Ahora implementa el flujo real de Expedientes (PB-12): el medico
+   completa los datos clinicos del paciente UNA vez (arriba de la zona
+   de carga, pensado para el caso tipico de varias muestras/laminillas
+   de un mismo paciente en una misma visita), sube una o mas imagenes,
+   y cada imagen se envia a POST /api/expedientes junto con esos datos.
+   El backend analiza la imagen con el modelo de IA y persiste un
+   expediente completo por cada una. El resultado (incluyendo si se
+   notifico por correo al medico) queda en `ultimosResultados`, que
+   ResultsViewModel expone para la pantalla "Ver Resultados".
    ===================================================================== */
 
 class UploadViewModel {
@@ -20,7 +22,15 @@ class UploadViewModel {
     this.imagenesPendientes = []; // [{ archivo: File, url: string }]
     this.analizando = false;
     this.progreso = 0; // 0-100
-    this.ultimosResultados = []; // resultados reales de la ultima corrida de analisis
+    this.ultimosResultados = []; // expedientes reales creados en la ultima corrida
+    this.datosPaciente = {
+      nombre_paciente: "",
+      numero_documento: "",
+      fecha_nacimiento: "",
+      historial_ginecologico: "",
+      sintomas: "",
+      observaciones: "",
+    };
     this._oyentes = [];
   }
 
@@ -30,6 +40,17 @@ class UploadViewModel {
 
   _notificar() {
     this._oyentes.forEach((f) => f(this));
+  }
+
+  actualizarCampoPaciente(campo, valor) {
+    this.datosPaciente[campo] = valor;
+  }
+
+  datosPacienteValidos() {
+    return (
+      this.datosPaciente.nombre_paciente.trim().length > 0 &&
+      this.datosPaciente.numero_documento.trim().length > 0
+    );
   }
 
   agregarArchivos(listaArchivos) {
@@ -45,13 +66,20 @@ class UploadViewModel {
     this._notificar();
   }
 
-  /**
-   * Envia cada imagen pendiente al backend (una por una) y guarda los
-   * resultados reales del modelo de IA. Actualiza `progreso` conforme
-   * van llegando las respuestas, para alimentar la barra de progreso.
-   */
+  limpiarFormularioPaciente() {
+    this.datosPaciente = {
+      nombre_paciente: "",
+      numero_documento: "",
+      fecha_nacimiento: "",
+      historial_ginecologico: "",
+      sintomas: "",
+      observaciones: "",
+    };
+  }
+
   async analizarImagenes() {
     if (this.imagenesPendientes.length === 0) return;
+    if (!this.datosPacienteValidos()) return;
 
     this.analizando = true;
     this.progreso = 0;
@@ -63,9 +91,9 @@ class UploadViewModel {
     for (let i = 0; i < total; i++) {
       const item = this.imagenesPendientes[i];
       try {
-        const resultado = await AnalisisModel.analizarImagen(item.archivo);
+        const expediente = await ExpedientesModel.crearExpediente(item.archivo, this.datosPaciente);
         this.ultimosResultados.push({
-          ...resultado,
+          ...expediente,
           urlPreview: item.url,
           nombreArchivoOriginal: item.archivo.name,
         });
@@ -83,9 +111,8 @@ class UploadViewModel {
     this.analizando = false;
     this._notificar();
 
-    // Las imagenes ya analizadas se limpian de "pendientes" para la
-    // siguiente tanda, igual que en el mockup original.
     this.imagenesPendientes = [];
+    this.limpiarFormularioPaciente();
     this._notificar();
   }
 }

@@ -16,11 +16,11 @@ const AdminModel = {
     return ApiClient.solicitarJSON("/api/admin/usuarios", { metodo: "GET", autenticado: true });
   },
 
-  async crearUsuario(nombreUsuario, contrasena, rol) {
+  async crearUsuario(nombreUsuario, contrasena, rol, correo) {
     return ApiClient.solicitarJSON("/api/admin/usuarios", {
       metodo: "POST",
       autenticado: true,
-      cuerpo: { nombre_usuario: nombreUsuario, contrasena: contrasena, rol: rol },
+      cuerpo: { nombre_usuario: nombreUsuario, contrasena: contrasena, rol: rol, correo: correo || null },
     });
   },
 
