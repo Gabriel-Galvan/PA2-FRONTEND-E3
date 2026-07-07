@@ -93,15 +93,19 @@ document.addEventListener("DOMContentLoaded", () => {
     "pac-nombre": "nombre_paciente",
     "pac-documento": "numero_documento",
     "pac-nacimiento": "fecha_nacimiento",
+    "pac-sexo": "sexo",
     "pac-historial": "historial_ginecologico",
     "pac-sintomas": "sintomas",
     "pac-observaciones": "observaciones",
   };
   Object.entries(mapaCamposPaciente).forEach(([idInput, campo]) => {
-    document.getElementById(idInput).addEventListener("input", (evento) => {
+    const elemento = document.getElementById(idInput);
+    const manejador = (evento) => {
       uploadVM.actualizarCampoPaciente(campo, evento.target.value);
       document.getElementById("upload-error").style.display = "none";
-    });
+    };
+    elemento.addEventListener("input", manejador);
+    elemento.addEventListener("change", manejador);
   });
 
   function limpiarFormularioPacienteDOM() {
@@ -338,6 +342,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if (evento.target === modalOverlay) cerrarModal();
   });
 
+  function etiquetaSexo(valor) {
+    return { femenino: "Femenino", masculino: "Masculino", otro: "Otro" }[valor] || "No especificado";
+  }
+
+  function calcularEdad(fechaNacimientoISO) {
+    if (!fechaNacimientoISO) return null;
+    const nacimiento = new Date(fechaNacimientoISO);
+    if (isNaN(nacimiento.getTime())) return null;
+    const hoy = new Date();
+    let edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const aunNoCumple =
+      hoy.getMonth() < nacimiento.getMonth() ||
+      (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() < nacimiento.getDate());
+    if (aunNoCumple) edad--;
+    return edad >= 0 ? edad : null;
+  }
+
   function renderModal(modoEdicion) {
     const e = expedientesVM.expedienteSeleccionado;
     if (!e) return;
@@ -363,12 +384,14 @@ document.addEventListener("DOMContentLoaded", () => {
         '<div class="expediente-detalle-grid">' +
         campoLectura("Numero de documento", e.numero_documento) +
         campoLectura("Fecha de nacimiento", e.fecha_nacimiento || "No registrada") +
+        campoLectura("Sexo", etiquetaSexo(e.sexo)) +
         campoLectura("Historial ginecologico", e.historial_ginecologico || "Sin registrar", true) +
         campoLectura("Sintomas", e.sintomas || "Sin registrar", true) +
         campoLectura("Observaciones", e.observaciones || "Sin registrar", true) +
         "</div>" +
         '<div class="expediente-acciones no-imprimir">' +
         (editable ? '<button class="btn-secundario" id="btnEditarExpediente">Editar datos</button>' : "") +
+        '<button class="btn-secundario" id="btnDescargarPdf">Descargar PDF</button>' +
         '<button class="btn-secundario" id="btnImprimirExpediente">Imprimir</button>' +
         (editable ? '<button class="btn-secundario" id="btnEliminarExpediente" style="color:#a02020; border-color:#c9a0a0;">Eliminar expediente</button>' : "") +
         "</div>";
@@ -389,6 +412,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
       document.getElementById("btnImprimirExpediente").addEventListener("click", () => window.print());
+      document.getElementById("btnDescargarPdf").addEventListener("click", () => descargarPdfExpediente(e));
     } else {
       modalCuerpo.innerHTML =
         '<div class="expediente-imagen-grande">' + imagenHTML + "</div>" +
@@ -396,6 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
         campoEdicion("edit-nombre", "Nombre del paciente", e.nombre_paciente) +
         campoEdicion("edit-documento", "Numero de documento", e.numero_documento) +
         campoEdicion("edit-nacimiento", "Fecha de nacimiento", e.fecha_nacimiento || "", "date") +
+        campoEdicionSexo(e.sexo) +
         campoEdicion("edit-historial", "Historial ginecologico", e.historial_ginecologico || "", "text", true) +
         campoEdicion("edit-sintomas", "Sintomas", e.sintomas || "", "text", true) +
         campoEdicion("edit-observaciones", "Observaciones", e.observaciones || "", "text", true) +
@@ -412,6 +437,7 @@ document.addEventListener("DOMContentLoaded", () => {
           nombre_paciente: document.getElementById("edit-nombre").value,
           numero_documento: document.getElementById("edit-documento").value,
           fecha_nacimiento: document.getElementById("edit-nacimiento").value || null,
+          sexo: document.getElementById("edit-sexo").value || null,
           historial_ginecologico: document.getElementById("edit-historial").value,
           sintomas: document.getElementById("edit-sintomas").value,
           observaciones: document.getElementById("edit-observaciones").value,
@@ -445,6 +471,199 @@ document.addEventListener("DOMContentLoaded", () => {
       "</div>"
     );
   }
+
+  function campoEdicionSexo(valorActual) {
+    const opciones = [
+      ["", "Sin especificar"],
+      ["femenino", "Femenino"],
+      ["masculino", "Masculino"],
+      ["otro", "Otro"],
+    ]
+      .map(
+        ([valor, etiqueta]) =>
+          '<option value="' + valor + '"' + (valor === (valorActual || "") ? " selected" : "") + ">" + etiqueta + "</option>"
+      )
+      .join("");
+    return '<div class="campo"><label>Sexo</label><select id="edit-sexo">' + opciones + "</select></div>";
+  }
+
+  // =====================================================================
+  // DESCARGA DE INFORME EN PDF (informe clinico generico del expediente)
+  // =====================================================================
+  function formatearFechaHora(iso) {
+    if (!iso) return "No registrada";
+    return new Date(iso).toLocaleString("es-PE", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function descargarPdfExpediente(e) {
+    const JsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    if (!JsPDFCtor) {
+      mostrarToast("No se pudo cargar el generador de PDF. Verifica tu conexion e intenta de nuevo.");
+      return;
+    }
+
+    const doc = new JsPDFCtor({ unit: "mm", format: "a4" });
+    const margenX = 18;
+    const anchoUtil = 210 - margenX * 2;
+    const medicoNombre = e.medico_id === usuario.id ? usuario.nombre_usuario : "Medico N.\u00ba " + e.medico_id;
+
+    function verificarSaltoPagina(y) {
+      if (y > 263) {
+        doc.addPage();
+        return 20;
+      }
+      return y;
+    }
+
+    // ---- Caja superior derecha: numero de expediente (como el recuadro del Nº Historia Clinica) ----
+    doc.setDrawColor(160, 120, 80);
+    doc.setLineWidth(0.3);
+    doc.rect(140, 12, 52, 20);
+    doc.setFontSize(8);
+    doc.setTextColor(90, 69, 53);
+    doc.text("N.\u00ba de Expediente", 143, 18);
+    doc.setFontSize(12);
+    doc.setTextColor(30, 26, 20);
+    doc.setFont(undefined, "bold");
+    doc.text(e.codigo, 143, 26);
+    doc.setFont(undefined, "normal");
+
+    // ---- Bloque de identificacion del paciente (izquierda, sin logo) ----
+    const edad = calcularEdad(e.fecha_nacimiento);
+    let yId = 16;
+    doc.setFontSize(9);
+    doc.setTextColor(60, 46, 30);
+    doc.text(
+      "Fecha nacimiento: " + (e.fecha_nacimiento || "No registrada") + (edad != null ? "     Edad: " + edad : ""),
+      margenX,
+      yId
+    );
+    yId += 5;
+    doc.text("Sexo: " + etiquetaSexo(e.sexo), margenX, yId);
+    yId += 5;
+    doc.text("N.\u00ba de documento: " + e.numero_documento, margenX, yId);
+    yId += 6;
+    doc.setFontSize(11);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(30, 26, 20);
+    doc.text(e.nombre_paciente, margenX, yId);
+    doc.setFont(undefined, "normal");
+
+    let y = 42;
+    doc.setDrawColor(150, 130, 100);
+    doc.setLineWidth(0.4);
+    doc.line(margenX, y, 210 - margenX, y);
+    y += 8;
+
+    doc.setFontSize(14);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(40, 32, 22);
+    doc.text("INFORME DE ANALISIS CITOLOGICO CERVICAL", 105, y, { align: "center" });
+    doc.setFont(undefined, "normal");
+    y += 8;
+
+    doc.setFontSize(9);
+    doc.setTextColor(90, 69, 53);
+    doc.text("Servicio: Patologia Cervical - Apoyo Diagnostico por IA", margenX, y);
+    doc.text("Fecha del analisis: " + formatearFechaHora(e.creado_en), 210 - margenX, y, { align: "right" });
+    y += 5;
+    doc.text("Medico responsable: " + medicoNombre, margenX, y);
+    y += 9;
+
+    function seccion(titulo, contenido) {
+      y = verificarSaltoPagina(y);
+      doc.setFontSize(9.5);
+      doc.setFont(undefined, "bold");
+      doc.setTextColor(120, 90, 50);
+      doc.text(titulo.toUpperCase(), margenX, y);
+      y += 1.5;
+      doc.setDrawColor(200, 185, 154);
+      doc.setLineWidth(0.2);
+      doc.line(margenX, y, 210 - margenX, y);
+      y += 5;
+      doc.setFont(undefined, "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(30, 26, 20);
+      const texto = contenido && String(contenido).trim() ? String(contenido) : "Sin registrar.";
+      const lineas = doc.splitTextToSize(texto, anchoUtil);
+      doc.text(lineas, margenX, y);
+      y += lineas.length * 5 + 6;
+    }
+
+    seccion("Antecedentes / Historial ginecologico", e.historial_ginecologico);
+    seccion("Motivo de consulta / Sintomas", e.sintomas);
+    seccion(
+      "Prueba diagnostica realizada",
+      "Analisis citologico automatizado mediante inteligencia artificial (modelo MobileNetV2 entrenado sobre el dataset SIPaKMeD), a partir de la imagen citologica '" +
+        (e.nombre_archivo_imagen || "muestra") +
+        "' cargada al sistema."
+    );
+
+    y = verificarSaltoPagina(y);
+    doc.setFontSize(9.5);
+    doc.setFont(undefined, "bold");
+    doc.setTextColor(120, 90, 50);
+    doc.text("RESULTADO DEL ANALISIS", margenX, y);
+    y += 1.5;
+    doc.setDrawColor(200, 185, 154);
+    doc.line(margenX, y, 210 - margenX, y);
+    y += 6;
+    doc.setFont(undefined, "normal");
+    doc.setFontSize(10);
+    doc.setTextColor(30, 26, 20);
+    doc.text("Diagnostico principal: " + e.diagnostico_ia + "  (" + e.confianza_ia.toFixed(2) + "% de confianza)", margenX, y);
+    y += 6;
+    const etiquetaSeveridad =
+      { normal: "Normal", revisar: "Requiere seguimiento", positivo: "Hallazgo relevante" }[e.severidad] ||
+      "Requiere seguimiento";
+    doc.text("Clasificacion de apoyo: " + etiquetaSeveridad, margenX, y);
+    y += 7;
+
+    doc.setFont(undefined, "bold");
+    doc.setFontSize(9);
+    doc.text("Otros hallazgos (diagnostico diferencial):", margenX, y);
+    y += 5;
+    doc.setFont(undefined, "normal");
+    const probsOrdenadas = Object.entries(e.probabilidades_ia || {}).sort((a, b) => b[1] - a[1]);
+    probsOrdenadas.forEach(([clase, valor]) => {
+      y = verificarSaltoPagina(y);
+      doc.text("- " + clase + ": " + Number(valor).toFixed(2) + "%", margenX + 3, y);
+      y += 5;
+    });
+    y += 4;
+
+    seccion("Observaciones clinicas", e.observaciones);
+    seccion(
+      "Recomendacion",
+      "Este informe fue generado por un sistema de apoyo diagnostico basado en inteligencia artificial. El diagnostico, tratamiento y seguimiento deben ser determinados por el profesional de salud tratante segun su criterio clinico."
+    );
+
+    y = verificarSaltoPagina(y + 6);
+    doc.setDrawColor(120, 100, 80);
+    doc.line(margenX, y, margenX + 75, y);
+    y += 5;
+    doc.setFontSize(9);
+    doc.setTextColor(60, 46, 30);
+    doc.text("Firma - Medico responsable: " + medicoNombre, margenX, y);
+
+    doc.setFontSize(7.5);
+    doc.setTextColor(140, 120, 95);
+    doc.text(
+      "Documento de apoyo diagnostico generado automaticamente. No constituye una historia clinica oficial ni tiene validez legal.",
+      105,
+      289,
+      { align: "center", maxWidth: anchoUtil }
+    );
+
+    doc.save(e.codigo + "-" + e.nombre_paciente.replace(/\s+/g, "_") + ".pdf");
+  }
+
 
   // =====================================================================
   // CONFIGURACION (tema, fuente, avatar, correo de notificaciones)

@@ -91,13 +91,60 @@
         </div>
 
         <div class="titulo-seccion">Tipos de Celulas (dataset SIPaKMeD)</div>
-        <div class="grid-tipos">
-          <div class="tarjeta-tipo"><div class="tipo-nombre">Parabasal</div><div class="tipo-desc">Celulas basales</div></div>
-          <div class="tarjeta-tipo"><div class="tipo-nombre">Superficial/Intermedia</div><div class="tipo-desc">Capa externa</div></div>
-          <div class="tarjeta-tipo"><div class="tipo-nombre">Metaplasica</div><div class="tipo-desc">Transformacion</div></div>
-          <div class="tarjeta-tipo"><div class="tipo-nombre">Koilocitotica</div><div class="tipo-desc">Asociado VPH</div></div>
-          <div class="tarjeta-tipo"><div class="tipo-nombre">Disqueratosica</div><div class="tipo-desc">Queratinizacion</div></div>
+        <div class="lista-tipos-celula">
+
+          <div class="fila-tipo-celula">
+            <div class="circulo-celula">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="22" fill="#e8b8c8" stroke="#b06880" stroke-width="1.5"/><circle cx="32" cy="32" r="13" fill="#6a3a5a"/></svg>
+            </div>
+            <div class="rectangulo-tipo">
+              <div class="tipo-nombre">Parabasal</div>
+              <div class="tipo-desc-larga">Celulas basales inmaduras de la capa mas profunda del epitelio escamoso. Se caracterizan por un nucleo grande en relacion a su citoplasma. Su presencia suele considerarse dentro de los limites normales.</div>
+            </div>
+          </div>
+
+          <div class="fila-tipo-celula">
+            <div class="circulo-celula">
+              <svg viewBox="0 0 64 64"><polygon points="32,6 54,18 58,42 40,58 20,54 6,34 12,14" fill="#f3d9c8" stroke="#c99a6a" stroke-width="1.5"/><circle cx="34" cy="32" r="5" fill="#7a4a30"/></svg>
+            </div>
+            <div class="rectangulo-tipo">
+              <div class="tipo-nombre">Superficial / Intermedia</div>
+              <div class="tipo-desc-larga">Celulas maduras y planas de las capas mas externas del epitelio escamoso, con un nucleo pequeno y bien definido. Su presencia es propia de un epitelio cervical sano y bien diferenciado.</div>
+            </div>
+          </div>
+
+          <div class="fila-tipo-celula">
+            <div class="circulo-celula">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#cdd8b8" stroke="#8a9a6a" stroke-width="1.5"/><path d="M32 8a24 24 0 000 48z" fill="#a9bb8a"/><circle cx="32" cy="32" r="9" fill="#5a6a3a"/></svg>
+            </div>
+            <div class="rectangulo-tipo">
+              <div class="tipo-nombre">Metaplasica</div>
+              <div class="tipo-desc-larga">Celulas en proceso de metaplasia escamosa, un cambio fisiologico benigno y frecuente en la zona de transformacion cervical. Ameritan seguimiento periodico, pero no indican malignidad por si solas.</div>
+            </div>
+          </div>
+
+          <div class="fila-tipo-celula">
+            <div class="circulo-celula">
+              <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="#d8b8d0" stroke="#9a6890" stroke-width="1.5"/><circle cx="32" cy="32" r="15" fill="#f0e6ee"/><circle cx="32" cy="32" r="7" fill="#5a2a50"/></svg>
+            </div>
+            <div class="rectangulo-tipo">
+              <div class="tipo-nombre">Koilocitotica</div>
+              <div class="tipo-desc-larga">Celulas con un halo claro alrededor del nucleo (halo perinuclear), un rasgo caracteristico asociado a la infeccion por el virus del papiloma humano (VPH). Su hallazgo sugiere un seguimiento clinico mas cercano.</div>
+            </div>
+          </div>
+
+          <div class="fila-tipo-celula">
+            <div class="circulo-celula">
+              <svg viewBox="0 0 64 64"><polygon points="32,4 50,14 60,34 48,56 24,60 8,44 6,22 18,8" fill="#e8a868" stroke="#a5793f" stroke-width="1.5"/><polygon points="30,22 40,20 44,30 38,42 26,40 22,30" fill="#2a1a1a"/></svg>
+            </div>
+            <div class="rectangulo-tipo">
+              <div class="tipo-nombre">Disqueratosica</div>
+              <div class="tipo-desc-larga">Celulas con queratinizacion anormal y un nucleo irregular y mas oscuro (hipercromatico). Estan mas asociadas a lesiones de mayor grado y requieren evaluacion clinica prioritaria.</div>
+            </div>
+          </div>
+
         </div>
+        <p class="nota-informativa">Las imagenes en los circulos son ilustraciones esquematicas de referencia (no fotografias reales de microscopia) para ayudar a reconocer visualmente cada tipo celular.</p>
 
         <div class="titulo-seccion">Informacion sobre otros tipos de cancer</div>
         <div class="grid-cancer-info">
@@ -194,6 +241,15 @@
             <div class="campo">
               <label>Fecha de nacimiento</label>
               <input type="date" id="pac-nacimiento">
+            </div>
+            <div class="campo">
+              <label>Sexo</label>
+              <select id="pac-sexo">
+                <option value="">Sin especificar</option>
+                <option value="femenino">Femenino</option>
+                <option value="masculino">Masculino</option>
+                <option value="otro">Otro</option>
+              </select>
             </div>
             <div class="campo campo-ancho">
               <label>Historial ginecologico</label>
@@ -357,6 +413,7 @@
 <!-- TOAST -->
 <div class="toast" id="toast">Operacion exitosa</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/4.0.0/jspdf.umd.min.js"></script>
 <script src="js/model/ApiClient.js"></script>
 <script src="js/model/AuthModel.js"></script>
 <script src="js/model/AnalisisModel.js"></script>
