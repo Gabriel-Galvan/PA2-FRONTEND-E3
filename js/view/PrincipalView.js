@@ -388,6 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
         campoLectura("Historial ginecologico", e.historial_ginecologico || "Sin registrar", true) +
         campoLectura("Sintomas", e.sintomas || "Sin registrar", true) +
         campoLectura("Observaciones", e.observaciones || "Sin registrar", true) +
+        seccionCelulasDetectadas(e) +
         "</div>" +
         '<div class="expediente-acciones no-imprimir">' +
         (editable ? '<button class="btn-secundario" id="btnEditarExpediente">Editar datos</button>' : "") +
@@ -452,6 +453,48 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       });
     }
+  }
+
+  /**
+   * Tabla de apoyo con TODAS las celulas que el detector encontro en la
+   * imagen de campo completo (no solo la que se reporta como
+   * diagnostico principal del expediente). Si solo hay 0 o 1 celula
+   * detectada, no aporta nada nuevo frente al badge principal, asi que
+   * no se muestra.
+   */
+  function seccionCelulasDetectadas(e) {
+    const celulas = e.celulas_detectadas || [];
+    if (celulas.length <= 1) return "";
+
+    const filas = celulas
+      .map((c, i) => {
+        return (
+          "<tr>" +
+          '<td style="padding:4px 8px; font-size:12px; color:#8a7560;">' + (i + 1) + "</td>" +
+          '<td style="padding:4px 8px; font-size:12px; color:#3d2e1e;">' + escaparHtml(c.clase) + "</td>" +
+          '<td style="padding:4px 8px; font-size:12px; color:#3d2e1e;">' + Number(c.confianza).toFixed(2) + "%</td>" +
+          "</tr>"
+        );
+      })
+      .join("");
+
+    return (
+      '<div class="campo campo-ancho" style="margin-top:14px;">' +
+      '<label style="display:block; font-size:11px; color:#8a7560; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">' +
+      "Todas las celulas detectadas (" + celulas.length + ")</label>" +
+      '<table style="width:100%; border-collapse:collapse;">' +
+      '<thead><tr style="border-bottom:1px solid #e0d3c0;">' +
+      '<th style="text-align:left; padding:4px 8px; font-size:10px; color:#a08a70; text-transform:uppercase;">#</th>' +
+      '<th style="text-align:left; padding:4px 8px; font-size:10px; color:#a08a70; text-transform:uppercase;">Tipo de celula</th>' +
+      '<th style="text-align:left; padding:4px 8px; font-size:10px; color:#a08a70; text-transform:uppercase;">Confianza</th>' +
+      "</tr></thead><tbody>" +
+      filas +
+      "</tbody></table>" +
+      '<p style="font-size:10px; color:#a08a70; margin-top:6px;">' +
+      "El diagnostico principal del expediente corresponde al hallazgo de mayor severidad clinica entre estas celulas." +
+      "</p>" +
+      "</div>"
+    );
   }
 
   function campoLectura(etiqueta, valor, ancho) {
@@ -637,6 +680,30 @@ document.addEventListener("DOMContentLoaded", () => {
       y += 5;
     });
     y += 4;
+
+    const celulasDetectadas = e.celulas_detectadas || [];
+    if (celulasDetectadas.length > 1) {
+      y = verificarSaltoPagina(y);
+      doc.setFont(undefined, "bold");
+      doc.setFontSize(9);
+      doc.text(
+        "Total de celulas detectadas en la imagen: " + celulasDetectadas.length,
+        margenX,
+        y
+      );
+      y += 5;
+      doc.setFont(undefined, "normal");
+      celulasDetectadas.forEach((c, i) => {
+        y = verificarSaltoPagina(y);
+        doc.text(
+          "- Celula " + (i + 1) + ": " + c.clase + " (" + Number(c.confianza).toFixed(2) + "%)",
+          margenX + 3,
+          y
+        );
+        y += 5;
+      });
+      y += 4;
+    }
 
     seccion("Observaciones clinicas", e.observaciones);
     seccion(
