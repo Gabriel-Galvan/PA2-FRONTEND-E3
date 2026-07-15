@@ -56,4 +56,17 @@ class AdminViewModel {
       this.mensajeError = error.message;
     }
   }
+
+  /** Devuelve el codigo generado (string) o null si fallo. El codigo tambien
+   *  llega como notificacion in-app, esto es solo para mostrarlo al instante. */
+  async generarCodigoInvitacion() {
+    this.mensajeError = "";
+    try {
+      const datos = await AdminModel.generarCodigoInvitacion();
+      return datos.codigo;
+    } catch (error) {
+      this.mensajeError = error.message;
+      return null;
+    }
+  }
 }

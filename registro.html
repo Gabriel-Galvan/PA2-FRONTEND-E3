@@ -24,21 +24,27 @@
 
     <form id="form-registro">
       <div class="campo">
-        <label>Nombre completo</label>
-        <input type="text" placeholder="Ej: Maria Garcia">
+        <label>Usuario</label>
+        <input type="text" id="reg-usuario" placeholder="nombre de usuario" required minlength="3" maxlength="32">
       </div>
       <div class="campo">
-        <label>Usuario</label>
-        <input type="text" placeholder="nombre de usuario">
+        <label>Correo electronico</label>
+        <input type="email" id="reg-correo" placeholder="tu_correo@gmail.com" required>
       </div>
       <div class="campo">
         <label>Contrasena</label>
-        <input type="password" placeholder="contrasena">
+        <input type="password" id="reg-contrasena" placeholder="contrasena" required minlength="4">
       </div>
       <div class="campo">
         <label>Confirmar contrasena</label>
-        <input type="password" placeholder="repite la contrasena">
+        <input type="password" id="reg-confirmar" placeholder="repite la contrasena" required>
       </div>
+      <div class="campo">
+        <label>Codigo de invitacion</label>
+        <input type="text" id="reg-codigo" placeholder="Codigo entregado por tu administrador" required
+               style="text-transform:uppercase;">
+      </div>
+      <p id="registro-error" style="display:none; color:#a02020; font-size:0.8571rem; margin-bottom:10px;"></p>
       <button type="submit" class="btn-principal">Crear Cuenta</button>
     </form>
 
@@ -46,6 +52,8 @@
   </div>
 </div>
 
+<script src="js/model/ApiClient.js"></script>
+<script src="js/model/AuthModel.js"></script>
 <script src="js/view/RegistroView.js"></script>
 </body>
 </html>

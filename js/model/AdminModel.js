@@ -38,4 +38,12 @@ const AdminModel = {
       cuerpo: { activo: activo },
     });
   },
+
+  /** Genera un codigo de invitacion de un solo uso para que un nuevo medico se auto-registre. */
+  async generarCodigoInvitacion() {
+    return ApiClient.solicitarJSON("/api/admin/codigos-invitacion", {
+      metodo: "POST",
+      autenticado: true,
+    });
+  },
 };

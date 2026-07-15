@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const expedientesVM = new ExpedientesViewModel();
   const configVM = new ConfigViewModel();
   const adminVM = new AdminViewModel();
+  const notificacionesVM = new NotificacionesViewModel();
 
   const usuario = AuthModel.obtenerUsuario();
 
@@ -88,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const mapaCamposPaciente = {
     "pac-nombre": "nombre_paciente",
     "pac-documento": "numero_documento",
+    "pac-correo": "correo_paciente",
     "pac-nacimiento": "fecha_nacimiento",
     "pac-sexo": "sexo",
     "pac-historial": "historial_ginecologico",
@@ -188,6 +190,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const huboCorreo = resultsVM.obtenerResultados().some((r) => r.correo_enviado);
     mostrarToast(huboCorreo ? "Expediente guardado y correo de notificacion enviado" : "Expediente(s) guardado(s) correctamente");
+    cargarNotificaciones();
   });
 
   // =====================================================================
@@ -382,6 +385,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "</div>" +
         '<div class="expediente-detalle-grid">' +
         campoLectura("Numero de documento", e.numero_documento) +
+        campoLectura("Correo del paciente", e.correo_paciente || "Sin registrar") +
         campoLectura("Fecha de nacimiento", e.fecha_nacimiento || "No registrada") +
         campoLectura("Sexo", etiquetaSexo(e.sexo)) +
         campoLectura("Historial ginecologico", e.historial_ginecologico || "Sin registrar", true) +
@@ -419,6 +423,7 @@ document.addEventListener("DOMContentLoaded", () => {
         '<div class="expediente-detalle-grid">' +
         campoEdicion("edit-nombre", "Nombre del paciente", e.nombre_paciente) +
         campoEdicion("edit-documento", "Numero de documento", e.numero_documento) +
+        campoEdicion("edit-correo", "Correo del paciente", e.correo_paciente || "", "email") +
         campoEdicion("edit-nacimiento", "Fecha de nacimiento", e.fecha_nacimiento || "", "date") +
         campoEdicionSexo(e.sexo) +
         campoEdicion("edit-historial", "Historial ginecologico", e.historial_ginecologico || "", "text", true) +
@@ -436,6 +441,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const campos = {
           nombre_paciente: document.getElementById("edit-nombre").value,
           numero_documento: document.getElementById("edit-documento").value,
+          correo_paciente: document.getElementById("edit-correo").value || null,
           fecha_nacimiento: document.getElementById("edit-nacimiento").value || null,
           sexo: document.getElementById("edit-sexo").value || null,
           historial_ginecologico: document.getElementById("edit-historial").value,
@@ -965,8 +971,111 @@ document.addEventListener("DOMContentLoaded", () => {
     setTimeout(() => toast.classList.remove("visible"), 3000);
   }
 
+  // =====================================================================
+  // NOTIFICACIONES ("la campanita"): expediente listo (medico) y
+  // codigo de invitacion generado (administradores)
+  // =====================================================================
+  const notifBoton = document.getElementById("btn-notificaciones");
+  const notifPanel = document.getElementById("notif-panel");
+  const notifBadge = document.getElementById("notif-badge");
+  const notifLista = document.getElementById("notif-panel-lista");
+
+  function formatearFechaNotificacion(iso) {
+    if (!iso) return "";
+    const fecha = new Date(iso);
+    if (isNaN(fecha.getTime())) return "";
+    return fecha.toLocaleString("es-PE", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+  }
+
+  function renderNotificaciones() {
+    if (notificacionesVM.noLeidas > 0) {
+      notifBadge.textContent = notificacionesVM.noLeidas > 9 ? "9+" : String(notificacionesVM.noLeidas);
+      notifBadge.style.display = "flex";
+    } else {
+      notifBadge.style.display = "none";
+    }
+
+    if (notificacionesVM.notificaciones.length === 0) {
+      notifLista.innerHTML = '<div class="notif-vacio">Sin notificaciones por ahora.</div>';
+      return;
+    }
+
+    notifLista.innerHTML = notificacionesVM.notificaciones
+      .map(
+        (n) => `
+        <button class="notif-item ${n.leida ? "" : "no-leida"}" data-id="${n.id}">
+          <div class="notif-titulo">${escaparHtml(n.titulo)}</div>
+          <div class="notif-mensaje">${escaparHtml(n.mensaje)}</div>
+          <div class="notif-fecha">${formatearFechaNotificacion(n.creado_en)}</div>
+        </button>`
+      )
+      .join("");
+
+    notifLista.querySelectorAll(".notif-item").forEach((boton) => {
+      boton.addEventListener("click", async () => {
+        const id = parseInt(boton.dataset.id, 10);
+        await notificacionesVM.marcarLeida(id);
+        renderNotificaciones();
+      });
+    });
+  }
+
+  async function cargarNotificaciones() {
+    await notificacionesVM.cargar();
+    renderNotificaciones();
+  }
+
+  notifBoton.addEventListener("click", (evento) => {
+    evento.stopPropagation();
+    const abierto = notifPanel.style.display !== "none";
+    notifPanel.style.display = abierto ? "none" : "block";
+    if (!abierto) cargarNotificaciones();
+  });
+  document.addEventListener("click", (evento) => {
+    if (!notifPanel.contains(evento.target) && evento.target !== notifBoton) {
+      notifPanel.style.display = "none";
+    }
+  });
+  document.getElementById("btn-notif-marcar-todas").addEventListener("click", async (evento) => {
+    evento.stopPropagation();
+    await notificacionesVM.marcarTodasLeidas();
+    renderNotificaciones();
+  });
+
+  // Refresca el contador cada 30s (sin abrir el panel), para que la
+  // campanita se actualice sola aunque el usuario no la abra.
+  setInterval(async () => {
+    await notificacionesVM.cargar();
+    renderNotificaciones();
+  }, 30000);
+
+  // =====================================================================
+  // CODIGO DE INVITACION (auto-registro de nuevos medicos, solo admin)
+  // =====================================================================
+  const btnGenerarCodigo = document.getElementById("btn-generar-codigo");
+  if (btnGenerarCodigo) {
+    btnGenerarCodigo.addEventListener("click", async () => {
+      const resultado = document.getElementById("codigo-generado-resultado");
+      btnGenerarCodigo.disabled = true;
+      btnGenerarCodigo.textContent = "Generando...";
+      const codigo = await adminVM.generarCodigoInvitacion();
+      btnGenerarCodigo.disabled = false;
+      btnGenerarCodigo.textContent = "Generar codigo de invitacion";
+      if (codigo) {
+        resultado.style.color = "#3a6020";
+        resultado.textContent = `Codigo generado: ${codigo}  (entregaselo al nuevo medico; tambien quedo guardado en tus notificaciones)`;
+        mostrarToast("Codigo de invitacion generado");
+        cargarNotificaciones();
+      } else {
+        resultado.style.color = "#a02020";
+        resultado.textContent = adminVM.mensajeError || "No se pudo generar el codigo";
+      }
+    });
+  }
+
   // ---- ARRANQUE ----
   aplicarPreferenciasVisuales();
   pintarUsuario();
   navegar("home");
+  cargarNotificaciones();
 });

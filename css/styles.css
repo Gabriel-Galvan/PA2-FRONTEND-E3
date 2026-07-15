@@ -307,7 +307,7 @@
   .barra-top {
     background-color: var(--bg-panel);
     border-bottom: 1px solid var(--borde);
-    padding: 14px 24px;
+    padding: 14px 68px 14px 24px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -871,4 +871,119 @@
     align-items: flex-start;
   }
   .circulo-celula { align-self: center; }
+}
+
+/* ---- NOTIFICACIONES ("la campanita") ---- */
+.notif-widget {
+  position: fixed;
+  top: 14px;
+  right: 20px;
+  z-index: 1200;
+}
+.notif-boton {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--borde);
+  background-color: var(--bg-panel);
+  color: var(--texto-principal);
+  font-size: 1.1429rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.12);
+}
+.notif-boton:hover { background-color: var(--bg-hover); }
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background-color: #a02020;
+  color: #fff;
+  font-size: 0.6429rem;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+.notif-panel {
+  position: absolute;
+  top: 46px;
+  right: 0;
+  width: 340px;
+  max-height: 420px;
+  overflow-y: auto;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--borde);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+}
+.notif-panel-cabecera {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background-color: var(--bg-tag);
+  border-bottom: 1px solid var(--borde);
+  font-size: 0.8571rem;
+  font-weight: bold;
+  color: var(--texto-principal);
+}
+.notif-marcar-todas {
+  background: none;
+  border: none;
+  color: var(--acento);
+  font-size: 0.7143rem;
+  font-weight: normal;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.notif-panel-lista { padding: 4px; }
+.notif-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 12px;
+  border: none;
+  border-bottom: 1px solid var(--borde-suave);
+  background-color: transparent;
+  cursor: pointer;
+  font-family: inherit;
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background-color: var(--bg-hover); }
+.notif-item.no-leida { background-color: var(--bg-tag); }
+.notif-item .notif-titulo {
+  font-size: 0.7857rem;
+  font-weight: bold;
+  color: var(--texto-principal);
+  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.notif-item.no-leida .notif-titulo::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--acento);
+  flex-shrink: 0;
+}
+.notif-item .notif-mensaje { font-size: 0.75rem; color: var(--texto-secundario); line-height: 1.4; }
+.notif-item .notif-fecha { font-size: 0.6429rem; color: var(--texto-terciario); margin-top: 4px; }
+.notif-vacio { padding: 24px 14px; text-align: center; font-size: 0.7857rem; color: var(--texto-terciario); }
+
+@media (max-width: 650px) {
+  .notif-widget { top: 10px; right: 12px; }
+  .notif-panel { width: calc(100vw - 24px); right: -4px; }
 }

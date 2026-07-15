@@ -34,6 +34,23 @@ const AuthModel = {
     return datos.usuario;
   },
 
+  /**
+   * Auto-registro publico de un nuevo medico, protegido por un codigo
+   * de invitacion de un solo uso (lo entrega un administrador desde
+   * Configuracion > Gestion de Usuarios). No requiere sesion previa.
+   */
+  async registrarUsuario({ nombreUsuario, contrasena, correo, codigo }) {
+    return ApiClient.solicitarJSON("/api/auth/registro", {
+      metodo: "POST",
+      cuerpo: {
+        nombre_usuario: nombreUsuario,
+        contrasena: contrasena,
+        correo: correo,
+        codigo: codigo,
+      },
+    });
+  },
+
   cerrarSesion() {
     sessionStorage.removeItem(this.CLAVE_TOKEN);
     sessionStorage.removeItem(this.CLAVE_USUARIO);

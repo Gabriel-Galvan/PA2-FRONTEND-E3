@@ -26,6 +26,7 @@ class UploadViewModel {
     this.datosPaciente = {
       nombre_paciente: "",
       numero_documento: "",
+      correo_paciente: "",
       fecha_nacimiento: "",
       sexo: "femenino",
       historial_ginecologico: "",
@@ -71,6 +72,7 @@ class UploadViewModel {
     this.datosPaciente = {
       nombre_paciente: "",
       numero_documento: "",
+      correo_paciente: "",
       fecha_nacimiento: "",
       sexo: "femenino",
       historial_ginecologico: "",

@@ -3,25 +3,51 @@
    =====================================================================
    CAPA: VIEW
    --------------------------------
-   DECISION DE DISENO: el Product Backlog (PB-14) solo exige un modulo
-   de AUTENTICACION para personal de salud ya registrado, no un
-   AUTO-REGISTRO publico. En un sistema clinico real, normalmente es
-   el administrador quien da de alta a cada medico (ver la seccion
-   "Gestion de Usuarios" dentro de Configuracion, una vez autenticado
-   como admin), en vez de permitir que cualquiera cree su propia
-   cuenta. Por eso esta pantalla se deja como informativa: mantiene el
-   diseno original del mockup, pero en vez de "crear" una cuenta real,
-   explica el flujo correcto y redirige al login.
+   Auto-registro publico de nuevos medicos, protegido por un codigo de
+   invitacion de un solo uso: un administrador lo genera desde
+   Configuracion > Gestion de Usuarios (le llega como notificacion
+   in-app con el codigo) y se lo entrega al nuevo medico por el canal
+   que prefiera. Sin un codigo valido, POST /api/auth/registro
+   rechaza la creacion de la cuenta (control de accesos, PB-14).
    ===================================================================== */
 
 document.addEventListener("DOMContentLoaded", () => {
   const formulario = document.getElementById("form-registro");
-  formulario.addEventListener("submit", (evento) => {
+  const elementoError = document.getElementById("registro-error");
+
+  function mostrarError(mensaje) {
+    elementoError.textContent = mensaje;
+    elementoError.style.display = "block";
+  }
+
+  formulario.addEventListener("submit", async (evento) => {
     evento.preventDefault();
-    alert(
-      "Por seguridad, las cuentas del personal de salud son creadas por un administrador " +
-      "desde el panel de Gestion de Usuarios (Configuracion). Contacta a tu administrador del sistema."
-    );
-    window.location.href = "login.html";
+    elementoError.style.display = "none";
+
+    const nombreUsuario = document.getElementById("reg-usuario").value.trim();
+    const correo = document.getElementById("reg-correo").value.trim();
+    const contrasena = document.getElementById("reg-contrasena").value;
+    const confirmar = document.getElementById("reg-confirmar").value;
+    const codigo = document.getElementById("reg-codigo").value.trim().toUpperCase();
+
+    if (contrasena !== confirmar) {
+      mostrarError("Las contrasenas no coinciden");
+      return;
+    }
+
+    const boton = formulario.querySelector("button[type=submit]");
+    boton.disabled = true;
+    boton.textContent = "Creando cuenta...";
+
+    try {
+      await AuthModel.registrarUsuario({ nombreUsuario, contrasena, correo, codigo });
+      alert("Cuenta creada correctamente. Ahora puedes iniciar sesion.");
+      window.location.href = "login.html";
+    } catch (error) {
+      mostrarError(error.message || "No se pudo crear la cuenta");
+    } finally {
+      boton.disabled = false;
+      boton.textContent = "Crear Cuenta";
+    }
   });
 });
