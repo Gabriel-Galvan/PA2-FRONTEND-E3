@@ -25,6 +25,19 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<script>
+  // Aplica tema y tamano de fuente guardados antes de pintar el resto
+  // de la pagina, para evitar el parpadeo de las preferencias del
+  // usuario (PrincipalView.js las vuelve a aplicar tras cargar, esto
+  // solo evita el "flash" inicial).
+  if (localStorage.getItem("cervix_app_modo_oscuro") === "1") {
+    document.body.classList.add("tema-oscuro");
+  }
+  var fuenteGuardada = parseInt(localStorage.getItem("cervix_app_tamano_fuente"), 10);
+  if (Number.isFinite(fuenteGuardada)) {
+    document.body.style.fontSize = fuenteGuardada + "px";
+  }
+</script>
 
 <div class="app-layout">
 
@@ -246,7 +259,7 @@
               <label>Sexo</label>
               <select id="pac-sexo">
                 <option value="">Sin especificar</option>
-                <option value="femenino">Femenino</option>
+                <option value="femenino" selected>Femenino</option>
                 <option value="masculino">Masculino</option>
                 <option value="otro">Otro</option>
               </select>
@@ -264,14 +277,14 @@
               <input type="text" id="pac-observaciones" placeholder="Notas adicionales del medico tratante">
             </div>
           </form>
-          <p style="padding: 0 18px 14px; font-size:11px; color:#8a7560;">* Campos obligatorios. Estos datos se guardaran junto con cada imagen que analices a continuacion.</p>
+          <p style="padding: 0 18px 14px; font-size:11px; color:var(--texto-secundario);">* Campos obligatorios. Estos datos se guardaran junto con cada imagen que analices a continuacion.</p>
         </div>
 
         <div class="zona-carga" id="zonaArrastrar">
           <div class="flecha">&#8679;</div>
           <h3>Arrastra imagenes aqui</h3>
           <p>o <span class="enlace">haz clic para seleccionar</span></p>
-          <p style="margin-top:6px; font-size:10px; color:#a09080">PNG, JPG, TIFF - maximo 20 MB</p>
+          <p style="margin-top:6px; font-size:10px; color:var(--texto-terciario)">PNG, JPG, TIFF - maximo 20 MB</p>
         </div>
         <input type="file" id="inputArchivo" multiple accept="image/*" style="display:none">
 
@@ -323,9 +336,16 @@
             </div>
           </div>
           <div class="config-fila">
-            <div>
+            <div style="flex:1;">
               <div class="config-label">Nombre de usuario</div>
-              <div class="config-desc" id="config-nombre-usuario">usuario</div>
+              <div class="config-desc">Este es el nombre con el que inicias sesion</div>
+              <form id="form-nombre-usuario" style="display:flex; gap:8px; margin-top:8px; max-width:420px;">
+                <input type="text" id="config-nombre-usuario-input" placeholder="nombre de usuario" required
+                       minlength="3" maxlength="32" pattern="[A-Za-z0-9_.\-]+"
+                       style="flex:1; padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
+                <button type="submit" class="btn-secundario" style="white-space:nowrap;">Guardar nombre</button>
+              </form>
+              <p id="nombre-usuario-mensaje" style="font-size:11px; margin-top:6px;"></p>
             </div>
           </div>
           <div class="config-fila">
@@ -334,7 +354,7 @@
               <div class="config-desc">Se usa para avisarte por email cuando un analisis termina con exito</div>
               <form id="form-correo-usuario" style="display:flex; gap:8px; margin-top:8px; max-width:420px;">
                 <input type="email" id="config-correo-input" placeholder="tu_correo@gmail.com"
-                       style="flex:1; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+                       style="flex:1; padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
                 <button type="submit" class="btn-secundario" style="white-space:nowrap;">Guardar correo</button>
               </form>
               <p id="correo-mensaje" style="font-size:11px; margin-top:6px;"></p>
@@ -377,12 +397,12 @@
           <div style="padding: 14px 18px;">
             <form id="form-admin-crear-usuario" style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
               <input type="text" id="admin-nuevo-usuario" placeholder="nombre de usuario" required
-                     style="flex:1; min-width:140px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+                     style="flex:1; min-width:140px; padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
               <input type="password" id="admin-nueva-contrasena" placeholder="contrasena" required
-                     style="flex:1; min-width:140px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+                     style="flex:1; min-width:140px; padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
               <input type="email" id="admin-nuevo-correo" placeholder="correo (opcional, para notificaciones)"
-                     style="flex:1; min-width:180px; padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
-              <select id="admin-nuevo-rol" style="padding:8px 10px; border:1px solid #c9b99a; background-color:#fdf9f4;">
+                     style="flex:1; min-width:180px; padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
+              <select id="admin-nuevo-rol" style="padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
                 <option value="medico">Medico</option>
                 <option value="admin">Administrador</option>
               </select>

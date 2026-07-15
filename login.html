@@ -7,6 +7,13 @@
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
+<script>
+  // Aplica el tema guardado (localStorage) antes de pintar el resto
+  // de la pagina, para evitar el parpadeo de un tema equivocado.
+  if (localStorage.getItem("cervix_app_modo_oscuro") === "1") {
+    document.body.classList.add("tema-oscuro");
+  }
+</script>
 
 <div class="auth-bg">
   <div class="auth-box">
@@ -38,7 +45,7 @@
 
     <div class="auth-link">No tienes cuenta? <a href="registro.html">Crear cuenta</a></div>
 
-    <p style="margin-top:16px; font-size:10px; color:#a09080; text-align:center;">
+    <p style="margin-top:16px; font-size:10px; color:var(--texto-terciario); text-align:center;">
       Usuario de prueba: <strong>admin</strong> &nbsp;|&nbsp; Contrasena: <strong>1234</strong>
     </p>
   </div>

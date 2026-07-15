@@ -59,6 +59,36 @@ const AuthModel = {
     return datos.correo;
   },
 
+  /**
+   * Sube la nueva foto de perfil al backend (PB-14 extendido): se
+   * guarda en la base de datos ligada al usuario, asi que persiste
+   * entre sesiones y dispositivos (ya no se pierde al recargar).
+   */
+  async actualizarAvatar(archivo) {
+    const datos = await ApiClient.subirArchivo("/api/perfil/avatar", "avatar", archivo, { autenticado: true });
+    const usuario = this.obtenerUsuario();
+    if (usuario) {
+      usuario.avatar_base64 = datos.avatar_base64;
+      sessionStorage.setItem(this.CLAVE_USUARIO, JSON.stringify(usuario));
+    }
+    return datos.avatar_base64;
+  },
+
+  /** Cambia el nombre de usuario y actualiza la copia local para que el resto de la app lo refleje. */
+  async actualizarNombreUsuario(nuevoNombreUsuario) {
+    const datos = await ApiClient.solicitarJSON("/api/perfil/nombre-usuario", {
+      metodo: "PATCH",
+      autenticado: true,
+      cuerpo: { nombre_usuario: nuevoNombreUsuario },
+    });
+    const usuario = this.obtenerUsuario();
+    if (usuario) {
+      usuario.nombre_usuario = datos.nombre_usuario;
+      sessionStorage.setItem(this.CLAVE_USUARIO, JSON.stringify(usuario));
+    }
+    return datos.nombre_usuario;
+  },
+
   obtenerToken() {
     return sessionStorage.getItem(this.CLAVE_TOKEN);
   },

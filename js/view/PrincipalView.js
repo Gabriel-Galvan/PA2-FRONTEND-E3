@@ -40,16 +40,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // DATOS DEL USUARIO EN PANTALLA
   // =====================================================================
   function pintarUsuario() {
-    const inicial = usuario.nombre_usuario.charAt(0).toUpperCase();
     document.getElementById("banner-nombre").textContent = usuario.nombre_usuario;
     document.getElementById("sb-usuario").textContent = usuario.nombre_usuario;
-    document.getElementById("config-nombre-usuario").textContent = usuario.nombre_usuario;
+    document.getElementById("config-nombre-usuario-input").value = usuario.nombre_usuario;
     document.getElementById("sb-rol").textContent = usuario.rol === "admin" ? "Administrador" : "Medico";
     document.getElementById("config-correo-input").value = usuario.correo || "";
-    if (!configVM.urlAvatar) {
-      document.getElementById("av-sidebar").textContent = inicial;
-      document.getElementById("av-grande").textContent = inicial;
-    }
+    pintarAvatar();
 
     // El panel de Gestion de Usuarios solo se muestra a administradores.
     // (El backend tambien lo exige con @rol_requerido('admin'); esto es
@@ -110,7 +106,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function limpiarFormularioPacienteDOM() {
     Object.keys(mapaCamposPaciente).forEach((idInput) => {
-      document.getElementById(idInput).value = "";
+      // El sexo del paciente viene predeterminado como Femenino (perfil
+      // clinico tipico de este sistema, ver <option selected> en el HTML);
+      // los demas campos si vuelven a quedar vacios.
+      document.getElementById(idInput).value = idInput === "pac-sexo" ? "femenino" : "";
     });
   }
 
@@ -648,6 +647,47 @@ document.addEventListener("DOMContentLoaded", () => {
         "' cargada al sistema."
     );
 
+    // ---- Imagen citologica analizada (si esta disponible en base64) ----
+    if (e.imagen_base64) {
+      y = verificarSaltoPagina(y);
+      doc.setFontSize(9.5);
+      doc.setFont(undefined, "bold");
+      doc.setTextColor(120, 90, 50);
+      doc.text("IMAGEN CITOLOGICA ANALIZADA", margenX, y);
+      y += 1.5;
+      doc.setDrawColor(200, 185, 154);
+      doc.setLineWidth(0.2);
+      doc.line(margenX, y, 210 - margenX, y);
+      y += 5;
+      try {
+        const propiedadesImagen = doc.getImageProperties(e.imagen_base64);
+        const anchoMaximo = 90; // mm
+        const altoMaximo = 90; // mm
+        let anchoImg = anchoMaximo;
+        let altoImg = (propiedadesImagen.height * anchoImg) / propiedadesImagen.width;
+        if (altoImg > altoMaximo) {
+          altoImg = altoMaximo;
+          anchoImg = (propiedadesImagen.width * altoImg) / propiedadesImagen.height;
+        }
+        if (y + altoImg > 280) {
+          doc.addPage();
+          y = 20;
+        }
+        doc.setDrawColor(190, 170, 140);
+        doc.rect(margenX, y, anchoImg, altoImg);
+        doc.addImage(e.imagen_base64, margenX, y, anchoImg, altoImg);
+        y += altoImg + 7;
+      } catch (errorImagen) {
+        // Si el navegador no logra decodificar la imagen (formato no
+        // soportado por jsPDF), se omite sin romper el resto del PDF.
+        doc.setFont(undefined, "normal");
+        doc.setFontSize(9);
+        doc.setTextColor(150, 60, 60);
+        doc.text("(No se pudo incrustar la imagen en este PDF)", margenX, y);
+        y += 6;
+      }
+    }
+
     y = verificarSaltoPagina(y);
     doc.setFontSize(9.5);
     doc.setFont(undefined, "bold");
@@ -733,37 +773,78 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   // =====================================================================
-  // CONFIGURACION (tema, fuente, avatar, correo de notificaciones)
+  // CONFIGURACION (tema, fuente, avatar, nombre de usuario, correo)
   // =====================================================================
+
+  /** Aplica el tema y el tamano de fuente actuales de configVM al documento. */
+  function aplicarPreferenciasVisuales() {
+    document.body.classList.toggle("tema-oscuro", configVM.modoOscuro);
+    document.getElementById("toggleTema").classList.toggle("on", configVM.modoOscuro);
+    document.getElementById("toggleClaro").classList.toggle("on", !configVM.modoOscuro);
+    document.body.style.fontSize = configVM.tamanoFuente + "px";
+    document.getElementById("valFuente").textContent = configVM.tamanoFuente;
+  }
+
   document.getElementById("toggleTema").addEventListener("click", () => {
-    const oscuro = configVM.alternarTema();
-    document.body.style.backgroundColor = oscuro ? "#1e1a14" : "#f0ebe3";
-    document.body.style.color = oscuro ? "#e8dece" : "#3d2e1e";
-    document.getElementById("toggleTema").classList.toggle("on", oscuro);
-    document.getElementById("toggleClaro").classList.toggle("on", !oscuro);
+    configVM.alternarTema();
+    aplicarPreferenciasVisuales();
   });
   document.getElementById("toggleClaro").addEventListener("click", () => {
     document.getElementById("toggleTema").click();
   });
 
   document.getElementById("btn-fuente-menos").addEventListener("click", () => {
-    document.body.style.fontSize = configVM.cambiarFuente(-1) + "px";
-    document.getElementById("valFuente").textContent = configVM.tamanoFuente;
+    configVM.cambiarFuente(-1);
+    aplicarPreferenciasVisuales();
   });
   document.getElementById("btn-fuente-mas").addEventListener("click", () => {
-    document.body.style.fontSize = configVM.cambiarFuente(1) + "px";
-    document.getElementById("valFuente").textContent = configVM.tamanoFuente;
+    configVM.cambiarFuente(1);
+    aplicarPreferenciasVisuales();
   });
 
-  document.getElementById("inputAvatar").addEventListener("change", (evento) => {
+  /** Pinta el avatar (foto real si existe, o la inicial del nombre) en sidebar y en Configuracion. */
+  function pintarAvatar() {
+    const inicial = usuario.nombre_usuario.charAt(0).toUpperCase();
+    const avGrande = document.getElementById("av-grande");
+    const avSidebar = document.getElementById("av-sidebar");
+    if (usuario.avatar_base64) {
+      avGrande.innerHTML = `<img src="${usuario.avatar_base64}">`;
+      avSidebar.innerHTML = `<img src="${usuario.avatar_base64}">`;
+    } else {
+      avGrande.textContent = inicial;
+      avSidebar.textContent = inicial;
+    }
+  }
+
+  document.getElementById("inputAvatar").addEventListener("change", async (evento) => {
     const archivo = evento.target.files[0];
     if (!archivo) return;
-    const url = URL.createObjectURL(archivo);
-    configVM.establecerAvatar(url);
-    document.getElementById("av-grande").innerHTML = `<img src="${url}">`;
-    document.getElementById("av-sidebar").innerHTML =
-      `<img src="${url}" style="width:100%;height:100%;border-radius:50%;object-fit:cover">`;
-    mostrarToast("Foto de perfil actualizada");
+    try {
+      await AuthModel.actualizarAvatar(archivo);
+      pintarAvatar();
+      mostrarToast("Foto de perfil actualizada");
+    } catch (error) {
+      mostrarToast(error.message || "No se pudo actualizar la foto de perfil");
+    } finally {
+      evento.target.value = "";
+    }
+  });
+
+  document.getElementById("form-nombre-usuario").addEventListener("submit", async (evento) => {
+    evento.preventDefault();
+    const nombreMensaje = document.getElementById("nombre-usuario-mensaje");
+    const nuevoNombre = document.getElementById("config-nombre-usuario-input").value.trim();
+    try {
+      const nombreActualizado = await AuthModel.actualizarNombreUsuario(nuevoNombre);
+      usuario.nombre_usuario = nombreActualizado;
+      pintarUsuario();
+      nombreMensaje.style.color = "#3a6020";
+      nombreMensaje.textContent = "Nombre de usuario actualizado correctamente.";
+      mostrarToast("Nombre de usuario actualizado");
+    } catch (error) {
+      nombreMensaje.style.color = "#a02020";
+      nombreMensaje.textContent = error.message;
+    }
   });
 
   document.getElementById("form-correo-usuario").addEventListener("submit", async (evento) => {
@@ -851,6 +932,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // ---- ARRANQUE ----
+  aplicarPreferenciasVisuales();
   pintarUsuario();
   navegar("home");
 });
