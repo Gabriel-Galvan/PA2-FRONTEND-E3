@@ -35,7 +35,7 @@
   }
   var fuenteGuardada = parseInt(localStorage.getItem("cervix_app_tamano_fuente"), 10);
   if (Number.isFinite(fuenteGuardada)) {
-    document.body.style.fontSize = fuenteGuardada + "px";
+    document.documentElement.style.fontSize = fuenteGuardada + "px";
   }
 </script>
 
@@ -277,14 +277,14 @@
               <input type="text" id="pac-observaciones" placeholder="Notas adicionales del medico tratante">
             </div>
           </form>
-          <p style="padding: 0 18px 14px; font-size:11px; color:var(--texto-secundario);">* Campos obligatorios. Estos datos se guardaran junto con cada imagen que analices a continuacion.</p>
+          <p style="padding: 0 18px 14px; font-size:0.7857rem; color:var(--texto-secundario);">* Campos obligatorios. Estos datos se guardaran junto con cada imagen que analices a continuacion.</p>
         </div>
 
         <div class="zona-carga" id="zonaArrastrar">
           <div class="flecha">&#8679;</div>
           <h3>Arrastra imagenes aqui</h3>
           <p>o <span class="enlace">haz clic para seleccionar</span></p>
-          <p style="margin-top:6px; font-size:10px; color:var(--texto-terciario)">PNG, JPG, TIFF - maximo 20 MB</p>
+          <p style="margin-top:6px; font-size:0.7143rem; color:var(--texto-terciario)">PNG, JPG, TIFF - maximo 20 MB</p>
         </div>
         <input type="file" id="inputArchivo" multiple accept="image/*" style="display:none">
 
@@ -294,7 +294,7 @@
 
         <div class="grid-previews" id="gridPreview"></div>
 
-        <p id="upload-error" style="display:none; color:#a02020; font-size:12px; margin-bottom:10px;"></p>
+        <p id="upload-error" style="display:none; color:#a02020; font-size:0.8571rem; margin-bottom:10px;"></p>
 
         <div id="secAnalizar" style="display:none">
           <button class="btn-analizar" id="btn-analizar-imagenes">&#9654; Analizar y Guardar Expediente</button>
@@ -345,7 +345,7 @@
                        style="flex:1; padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
                 <button type="submit" class="btn-secundario" style="white-space:nowrap;">Guardar nombre</button>
               </form>
-              <p id="nombre-usuario-mensaje" style="font-size:11px; margin-top:6px;"></p>
+              <p id="nombre-usuario-mensaje" style="font-size:0.7857rem; margin-top:6px;"></p>
             </div>
           </div>
           <div class="config-fila">
@@ -357,7 +357,7 @@
                        style="flex:1; padding:8px 10px; border:1px solid var(--borde); background-color:var(--bg-input); color:var(--texto-principal);">
                 <button type="submit" class="btn-secundario" style="white-space:nowrap;">Guardar correo</button>
               </form>
-              <p id="correo-mensaje" style="font-size:11px; margin-top:6px;"></p>
+              <p id="correo-mensaje" style="font-size:0.7857rem; margin-top:6px;"></p>
             </div>
           </div>
         </div>
@@ -408,7 +408,7 @@
               </select>
               <button type="submit" class="btn-principal" style="width:auto; padding:8px 16px;">Crear usuario</button>
             </form>
-            <p id="admin-error" style="color:#a02020; font-size:12px; margin-bottom:10px;"></p>
+            <p id="admin-error" style="color:#a02020; font-size:0.8571rem; margin-bottom:10px;"></p>
             <div id="tabla-admin-usuarios"></div>
           </div>
         </div>

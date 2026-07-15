@@ -201,7 +201,7 @@ document.addEventListener("DOMContentLoaded", () => {
       contenedor.innerHTML =
         '<div class="estado-vacio"><div class="icono-vacio">&#9654;</div>' +
         "<p>No hay resultados todavia.</p>" +
-        '<p style="margin-top:6px; font-size:11px;">Ve a "Nuevo Expediente" para registrar un paciente y analizar su imagen.</p></div>';
+        '<p style="margin-top:6px; font-size:0.7857rem;">Ve a "Nuevo Expediente" para registrar un paciente y analizar su imagen.</p></div>';
       return;
     }
 
@@ -223,7 +223,7 @@ document.addEventListener("DOMContentLoaded", () => {
         '<div class="resultado-meta">Error al analizar</div></div>' +
         '<span class="badge badge-positivo">Error</span></div>' +
         '<div class="resultado-img"><img src="' + r.urlPreview + '" alt="muestra"></div>' +
-        '<p style="font-size:11px;color:#a02020;">' + escaparHtml(r.error) + "</p>" +
+        '<p style="font-size:0.7857rem;color:#a02020;">' + escaparHtml(r.error) + "</p>" +
         "</div>"
       );
     }
@@ -258,7 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const contenedor = document.getElementById("contenido-historial");
 
     if (expedientesVM.mensajeError) {
-      contenedor.innerHTML = '<p style="color:#a02020; font-size:12px;">' + escaparHtml(expedientesVM.mensajeError) + "</p>";
+      contenedor.innerHTML = '<p style="color:#a02020; font-size:0.8571rem;">' + escaparHtml(expedientesVM.mensajeError) + "</p>";
       return;
     }
 
@@ -285,7 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const imagenLocal = expedientesVM.imagenLocalPara(e.id);
     const imagenHTML = imagenLocal
       ? '<img src="' + imagenLocal + '" alt="muestra">'
-      : '<span style="font-size:26px;">&#9685;</span>';
+      : '<span style="font-size:1.8571rem;">&#9685;</span>';
     const infoMedico = usuario.rol === "admin" ? '<div class="expediente-doctor">Medico #' + e.medico_id + "</div>" : "";
 
     return (
@@ -425,7 +425,7 @@ document.addEventListener("DOMContentLoaded", () => {
         campoEdicion("edit-sintomas", "Sintomas", e.sintomas || "", "text", true) +
         campoEdicion("edit-observaciones", "Observaciones", e.observaciones || "", "text", true) +
         "</div>" +
-        '<p id="modal-error" style="color:#a02020; font-size:11px; margin-bottom:8px;"></p>' +
+        '<p id="modal-error" style="color:#a02020; font-size:0.7857rem; margin-bottom:8px;"></p>' +
         '<div class="expediente-acciones no-imprimir">' +
         '<button class="btn-principal" id="btnGuardarEdicion" style="width:auto; padding:8px 16px;">Guardar cambios</button>' +
         '<button class="btn-secundario" id="btnCancelarEdicion">Cancelar</button>' +
@@ -469,9 +469,9 @@ document.addEventListener("DOMContentLoaded", () => {
       .map((c, i) => {
         return (
           "<tr>" +
-          '<td style="padding:4px 8px; font-size:12px; color:#8a7560;">' + (i + 1) + "</td>" +
-          '<td style="padding:4px 8px; font-size:12px; color:#3d2e1e;">' + escaparHtml(c.clase) + "</td>" +
-          '<td style="padding:4px 8px; font-size:12px; color:#3d2e1e;">' + Number(c.confianza).toFixed(2) + "%</td>" +
+          '<td style="padding:4px 8px; font-size:0.8571rem; color:var(--texto-secundario);">' + (i + 1) + "</td>" +
+          '<td style="padding:4px 8px; font-size:0.8571rem; color:var(--texto-principal);">' + escaparHtml(c.clase) + "</td>" +
+          '<td style="padding:4px 8px; font-size:0.8571rem; color:var(--texto-principal);">' + Number(c.confianza).toFixed(2) + "%</td>" +
           "</tr>"
         );
       })
@@ -479,17 +479,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return (
       '<div class="campo campo-ancho" style="margin-top:14px;">' +
-      '<label style="display:block; font-size:11px; color:#8a7560; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">' +
+      '<label style="display:block; font-size:0.7857rem; color:var(--texto-secundario); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.5px;">' +
       "Todas las celulas detectadas (" + celulas.length + ")</label>" +
       '<table style="width:100%; border-collapse:collapse;">' +
       '<thead><tr style="border-bottom:1px solid #e0d3c0;">' +
-      '<th style="text-align:left; padding:4px 8px; font-size:10px; color:#a08a70; text-transform:uppercase;">#</th>' +
-      '<th style="text-align:left; padding:4px 8px; font-size:10px; color:#a08a70; text-transform:uppercase;">Tipo de celula</th>' +
-      '<th style="text-align:left; padding:4px 8px; font-size:10px; color:#a08a70; text-transform:uppercase;">Confianza</th>' +
+      '<th style="text-align:left; padding:4px 8px; font-size:0.7143rem; color:var(--texto-terciario); text-transform:uppercase;">#</th>' +
+      '<th style="text-align:left; padding:4px 8px; font-size:0.7143rem; color:var(--texto-terciario); text-transform:uppercase;">Tipo de celula</th>' +
+      '<th style="text-align:left; padding:4px 8px; font-size:0.7143rem; color:var(--texto-terciario); text-transform:uppercase;">Confianza</th>' +
       "</tr></thead><tbody>" +
       filas +
       "</tbody></table>" +
-      '<p style="font-size:10px; color:#a08a70; margin-top:6px;">' +
+      '<p style="font-size:0.7143rem; color:var(--texto-terciario); margin-top:6px;">' +
       "El diagnostico principal del expediente corresponde al hallazgo de mayor severidad clinica entre estas celulas." +
       "</p>" +
       "</div>"
@@ -499,8 +499,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function campoLectura(etiqueta, valor, ancho) {
     return (
       '<div class="campo' + (ancho ? " campo-ancho" : "") + '">' +
-      '<label style="display:block; font-size:11px; color:#8a7560; margin-bottom:3px; text-transform:uppercase; letter-spacing:0.5px;">' + etiqueta + "</label>" +
-      '<div style="font-size:13px; color:#3d2e1e;">' + escaparHtml(valor) + "</div>" +
+      '<label style="display:block; font-size:0.7857rem; color:var(--texto-secundario); margin-bottom:3px; text-transform:uppercase; letter-spacing:0.5px;">' + etiqueta + "</label>" +
+      '<div style="font-size:0.9286rem; color:var(--texto-principal);">' + escaparHtml(valor) + "</div>" +
       "</div>"
     );
   }
@@ -647,48 +647,25 @@ document.addEventListener("DOMContentLoaded", () => {
         "' cargada al sistema."
     );
 
-    // ---- Imagen citologica analizada (si esta disponible en base64) ----
-    if (e.imagen_base64) {
+    // ---- RESULTADO DEL ANALISIS: texto a la izquierda, imagen analizada
+    // en miniatura a la derecha (mismo bloque, dos columnas) ----
+    const anchoImagenMiniatura = 55; // mm
+    const altoImagenMiniatura = 55; // mm
+    const tieneImagen = !!e.imagen_base64;
+    const gapColumnas = 8;
+    const anchoColumnaTexto = tieneImagen ? anchoUtil - anchoImagenMiniatura - gapColumnas : anchoUtil;
+    const xColumnaImagen = margenX + anchoColumnaTexto + gapColumnas;
+
+    // Si el bloque completo (encabezado + un par de lineas + la miniatura)
+    // no entra en lo que queda de la pagina actual, se pasa a una pagina
+    // nueva completa para que la imagen no quede cortada a la mitad.
+    if (tieneImagen && y + altoImagenMiniatura + 14 > 280) {
+      doc.addPage();
+      y = 20;
+    } else {
       y = verificarSaltoPagina(y);
-      doc.setFontSize(9.5);
-      doc.setFont(undefined, "bold");
-      doc.setTextColor(120, 90, 50);
-      doc.text("IMAGEN CITOLOGICA ANALIZADA", margenX, y);
-      y += 1.5;
-      doc.setDrawColor(200, 185, 154);
-      doc.setLineWidth(0.2);
-      doc.line(margenX, y, 210 - margenX, y);
-      y += 5;
-      try {
-        const propiedadesImagen = doc.getImageProperties(e.imagen_base64);
-        const anchoMaximo = 90; // mm
-        const altoMaximo = 90; // mm
-        let anchoImg = anchoMaximo;
-        let altoImg = (propiedadesImagen.height * anchoImg) / propiedadesImagen.width;
-        if (altoImg > altoMaximo) {
-          altoImg = altoMaximo;
-          anchoImg = (propiedadesImagen.width * altoImg) / propiedadesImagen.height;
-        }
-        if (y + altoImg > 280) {
-          doc.addPage();
-          y = 20;
-        }
-        doc.setDrawColor(190, 170, 140);
-        doc.rect(margenX, y, anchoImg, altoImg);
-        doc.addImage(e.imagen_base64, margenX, y, anchoImg, altoImg);
-        y += altoImg + 7;
-      } catch (errorImagen) {
-        // Si el navegador no logra decodificar la imagen (formato no
-        // soportado por jsPDF), se omite sin romper el resto del PDF.
-        doc.setFont(undefined, "normal");
-        doc.setFontSize(9);
-        doc.setTextColor(150, 60, 60);
-        doc.text("(No se pudo incrustar la imagen en este PDF)", margenX, y);
-        y += 6;
-      }
     }
 
-    y = verificarSaltoPagina(y);
     doc.setFontSize(9.5);
     doc.setFont(undefined, "bold");
     doc.setTextColor(120, 90, 50);
@@ -697,16 +674,67 @@ document.addEventListener("DOMContentLoaded", () => {
     doc.setDrawColor(200, 185, 154);
     doc.line(margenX, y, 210 - margenX, y);
     y += 6;
+
+    const yInicioBloque = y;
+
+    // Columna derecha: miniatura de la imagen citologica analizada.
+    if (tieneImagen) {
+      try {
+        doc.setDrawColor(190, 170, 140);
+        doc.rect(xColumnaImagen, yInicioBloque, anchoImagenMiniatura, altoImagenMiniatura);
+
+        // Mantiene la proporcion real de la imagen dentro del recuadro
+        // (evita que se vea estirada/deformada), centrandola.
+        const propiedadesImagen = doc.getImageProperties(e.imagen_base64);
+        let anchoDibujo = anchoImagenMiniatura;
+        let altoDibujo = (propiedadesImagen.height * anchoDibujo) / propiedadesImagen.width;
+        if (altoDibujo > altoImagenMiniatura) {
+          altoDibujo = altoImagenMiniatura;
+          anchoDibujo = (propiedadesImagen.width * altoDibujo) / propiedadesImagen.height;
+        }
+        const xImg = xColumnaImagen + (anchoImagenMiniatura - anchoDibujo) / 2;
+        const yImg = yInicioBloque + (altoImagenMiniatura - altoDibujo) / 2;
+        doc.addImage(e.imagen_base64, xImg, yImg, anchoDibujo, altoDibujo);
+
+        doc.setFont(undefined, "normal");
+        doc.setFontSize(7);
+        doc.setTextColor(140, 120, 95);
+        doc.text("Imagen citologica analizada", xColumnaImagen + anchoImagenMiniatura / 2, yInicioBloque + altoImagenMiniatura + 4, {
+          align: "center",
+          maxWidth: anchoImagenMiniatura,
+        });
+      } catch (errorImagen) {
+        // Si el navegador no logra decodificar la imagen (formato no
+        // soportado por jsPDF), se omite sin romper el resto del PDF.
+        doc.setDrawColor(190, 170, 140);
+        doc.rect(xColumnaImagen, yInicioBloque, anchoImagenMiniatura, altoImagenMiniatura);
+        doc.setFont(undefined, "normal");
+        doc.setFontSize(7.5);
+        doc.setTextColor(150, 60, 60);
+        doc.text("Imagen no disponible", xColumnaImagen + anchoImagenMiniatura / 2, yInicioBloque + altoImagenMiniatura / 2, {
+          align: "center",
+          maxWidth: anchoImagenMiniatura - 6,
+        });
+      }
+    }
+
+    // Columna izquierda: texto del resultado, envuelto al ancho reducido.
     doc.setFont(undefined, "normal");
     doc.setFontSize(10);
     doc.setTextColor(30, 26, 20);
-    doc.text("Diagnostico principal: " + e.diagnostico_ia + "  (" + e.confianza_ia.toFixed(2) + "% de confianza)", margenX, y);
-    y += 6;
+    const lineasDiagnostico = doc.splitTextToSize(
+      "Diagnostico principal: " + e.diagnostico_ia + " (" + e.confianza_ia.toFixed(2) + "% de confianza)",
+      anchoColumnaTexto
+    );
+    doc.text(lineasDiagnostico, margenX, y);
+    y += lineasDiagnostico.length * 5 + 1;
+
     const etiquetaSeveridad =
       { normal: "Normal", revisar: "Requiere seguimiento", positivo: "Hallazgo relevante" }[e.severidad] ||
       "Requiere seguimiento";
-    doc.text("Clasificacion de apoyo: " + etiquetaSeveridad, margenX, y);
-    y += 7;
+    const lineasSeveridad = doc.splitTextToSize("Clasificacion de apoyo: " + etiquetaSeveridad, anchoColumnaTexto);
+    doc.text(lineasSeveridad, margenX, y);
+    y += lineasSeveridad.length * 5 + 3;
 
     doc.setFont(undefined, "bold");
     doc.setFontSize(9);
@@ -715,11 +743,17 @@ document.addEventListener("DOMContentLoaded", () => {
     doc.setFont(undefined, "normal");
     const probsOrdenadas = Object.entries(e.probabilidades_ia || {}).sort((a, b) => b[1] - a[1]);
     probsOrdenadas.forEach(([clase, valor]) => {
-      y = verificarSaltoPagina(y);
-      doc.text("- " + clase + ": " + Number(valor).toFixed(2) + "%", margenX + 3, y);
-      y += 5;
+      const lineasProb = doc.splitTextToSize("- " + clase + ": " + Number(valor).toFixed(2) + "%", anchoColumnaTexto - 3);
+      doc.text(lineasProb, margenX + 3, y);
+      y += lineasProb.length * 5;
     });
-    y += 4;
+
+    // La siguiente seccion no puede empezar antes de que termine tanto el
+    // texto como la miniatura, para que no se superpongan.
+    if (tieneImagen) {
+      y = Math.max(y, yInicioBloque + altoImagenMiniatura + 9);
+    }
+    y += 5;
 
     const celulasDetectadas = e.celulas_detectadas || [];
     if (celulasDetectadas.length > 1) {
@@ -781,7 +815,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.classList.toggle("tema-oscuro", configVM.modoOscuro);
     document.getElementById("toggleTema").classList.toggle("on", configVM.modoOscuro);
     document.getElementById("toggleClaro").classList.toggle("on", !configVM.modoOscuro);
-    document.body.style.fontSize = configVM.tamanoFuente + "px";
+    document.documentElement.style.fontSize = configVM.tamanoFuente + "px";
     document.getElementById("valFuente").textContent = configVM.tamanoFuente;
   }
 
@@ -873,7 +907,7 @@ document.addEventListener("DOMContentLoaded", () => {
         (u) => `
         <div class="config-fila">
           <div>
-            <div class="config-label">${escaparHtml(u.nombre_usuario)} <span style="color:#8a7560;font-size:11px;">(${u.rol})</span></div>
+            <div class="config-label">${escaparHtml(u.nombre_usuario)} <span style="color:var(--texto-secundario);font-size:0.7857rem;">(${u.rol})</span></div>
             <div class="config-desc">${u.activo ? "Activo" : "Inactivo"}${u.correo ? " &middot; " + escaparHtml(u.correo) : " &middot; sin correo configurado"}</div>
           </div>
           <div style="display:flex; gap:6px;">

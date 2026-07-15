@@ -11,6 +11,19 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  /* ---- TAMANO DE FUENTE (base de los rem) ----
+     Todo el CSS de aqui en adelante usa "rem" (relativo al font-size
+     del <html>) en vez de "px" fijos. Esto es lo que permite que el
+     control de Configuracion > Tamano de fuente SI cambie el tamano
+     de TODO el texto de la app (antes cambiaba solo el font-size del
+     <body>, que no tenia ningun efecto porque cada elemento definia
+     su propio tamano fijo en px). 14px es el tamano base "neutro"
+     (equivale a como se veia la app antes de este cambio); el
+     ViewModel de Configuracion mueve este valor entre 11 y 20. */
+  html {
+    font-size: 14px;
+  }
+
   /* ---- TEMA (Modo Claro / Modo Oscuro) ----
      Todo el CSS usa estas variables en lugar de colores fijos, para
      que cambiar de tema (ver .tema-oscuro mas abajo) se propague a
@@ -48,7 +61,7 @@
 
   body {
     font-family: Arial, sans-serif;
-    font-size: 14px;
+    font-size: 1rem;
     background-color: var(--bg-pagina);
     color: var(--texto-principal);
     transition: background-color 0.2s ease, color 0.2s ease;
@@ -76,14 +89,14 @@
 
   .auth-box h2 {
     font-family: Arial, sans-serif;
-    font-size: 18px;
+    font-size: 1.2857rem;
     color: var(--texto-principal);
     margin-bottom: 4px;
     font-weight: normal;
   }
 
   .auth-box .subtitulo {
-    font-size: 12px;
+    font-size: 0.8571rem;
     color: var(--texto-secundario);
     margin-bottom: 20px;
     border-bottom: 1px solid var(--borde-suave);
@@ -108,13 +121,13 @@
 
   .auth-box .logo-area .icono span {
     color: #fff;
-    font-size: 22px;
+    font-size: 1.5714rem;
     font-family: Arial, sans-serif;
     font-weight: bold;
   }
 
   .auth-box .logo-area .nombre-app {
-    font-size: 11px;
+    font-size: 0.7857rem;
     color: var(--texto-secundario);
     letter-spacing: 1px;
     text-transform: uppercase;
@@ -123,7 +136,7 @@
   .campo { margin-bottom: 14px; }
   .campo label {
     display: block;
-    font-size: 11px;
+    font-size: 0.7857rem;
     color: var(--texto-secundario);
     margin-bottom: 4px;
     text-transform: uppercase;
@@ -136,7 +149,7 @@
     border: 1px solid var(--borde);
     background-color: var(--bg-input);
     color: var(--texto-principal);
-    font-size: 13px;
+    font-size: 0.9286rem;
     font-family: inherit;
     outline: none;
   }
@@ -149,7 +162,7 @@
     background-color: var(--acento);
     color: #fff;
     border: none;
-    font-size: 14px;
+    font-size: 1rem;
     font-family: inherit;
     cursor: pointer;
     margin-top: 6px;
@@ -159,7 +172,7 @@
   .auth-link {
     text-align: center;
     margin-top: 14px;
-    font-size: 12px;
+    font-size: 0.8571rem;
     color: var(--texto-secundario);
   }
   .auth-link a { color: var(--acento); cursor: pointer; text-decoration: underline; }
@@ -169,7 +182,7 @@
     align-items: center;
     justify-content: space-between;
     margin-bottom: 10px;
-    font-size: 12px;
+    font-size: 0.8571rem;
     color: var(--texto-secundario);
   }
   .check-row label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
@@ -199,14 +212,14 @@
 
   .sidebar-cabecera .titulo-app {
     font-family: Arial, sans-serif;
-    font-size: 13px;
+    font-size: 0.9286rem;
     color: var(--texto-principal);
     line-height: 1.4;
     font-weight: normal;
   }
 
   .sidebar-cabecera .subtitulo-app {
-    font-size: 10px;
+    font-size: 0.7143rem;
     color: var(--texto-secundario);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -229,7 +242,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
+    font-size: 1rem;
     font-weight: bold;
     color: #fff;
     flex-shrink: 0;
@@ -238,12 +251,12 @@
   }
   .avatar-chico img { width: 100%; height: 100%; object-fit: cover; }
 
-  .info-usuario .nombre { font-size: 12px; font-weight: bold; color: var(--texto-principal); }
-  .info-usuario .rol { font-size: 10px; color: var(--texto-secundario); }
+  .info-usuario .nombre { font-size: 0.8571rem; font-weight: bold; color: var(--texto-principal); }
+  .info-usuario .rol { font-size: 0.7143rem; color: var(--texto-secundario); }
 
   .nav-grupo { padding: 10px 8px 0; }
   .nav-grupo-label {
-    font-size: 9px;
+    font-size: 0.6429rem;
     color: var(--texto-terciario);
     text-transform: uppercase;
     letter-spacing: 0.8px;
@@ -257,7 +270,7 @@
     gap: 8px;
     padding: 8px 10px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 0.8571rem;
     color: var(--texto-secundario);
     margin-bottom: 1px;
   }
@@ -276,7 +289,7 @@
 
   .pie-sidebar {
     text-align: center;
-    font-size: 9px;
+    font-size: 0.6429rem;
     color: var(--texto-terciario);
     padding: 8px;
     text-transform: uppercase;
@@ -302,7 +315,7 @@
 
   .barra-top h1 {
     font-family: Arial, sans-serif;
-    font-size: 17px;
+    font-size: 1.2143rem;
     font-weight: normal;
     color: var(--texto-principal);
   }
@@ -318,16 +331,16 @@
   }
   .banner-bienvenida h2 {
     font-family: Arial, sans-serif;
-    font-size: 15px;
+    font-size: 1.0714rem;
     font-weight: normal;
     color: var(--texto-principal);
     margin-bottom: 4px;
   }
-  .banner-bienvenida p { font-size: 12px; color: var(--texto-secundario); }
+  .banner-bienvenida p { font-size: 0.8571rem; color: var(--texto-secundario); }
 
   .titulo-seccion {
     font-family: Arial, sans-serif;
-    font-size: 13px;
+    font-size: 0.9286rem;
     font-weight: normal;
     color: var(--texto-principal);
     margin-bottom: 12px;
@@ -350,8 +363,8 @@
     cursor: pointer;
   }
   .tarjeta-tipo:hover { background-color: var(--bg-hover); border-color: var(--acento); }
-  .tarjeta-tipo .tipo-nombre { font-size: 12px; font-weight: bold; color: var(--texto-principal); margin-bottom: 3px; }
-  .tarjeta-tipo .tipo-desc { font-size: 10px; color: var(--texto-secundario); }
+  .tarjeta-tipo .tipo-nombre { font-size: 0.8571rem; font-weight: bold; color: var(--texto-principal); margin-bottom: 3px; }
+  .tarjeta-tipo .tipo-desc { font-size: 0.7143rem; color: var(--texto-secundario); }
 
   .grid-acciones {
     display: grid;
@@ -370,13 +383,13 @@
   }
   .tarjeta-accion:hover { background-color: var(--bg-hover); border-color: var(--acento); }
   .tarjeta-accion .icono-accion {
-    font-size: 20px;
+    font-size: 1.4286rem;
     color: var(--acento);
     margin-top: 2px;
     flex-shrink: 0;
   }
-  .tarjeta-accion .a-titulo { font-size: 13px; font-weight: bold; color: var(--texto-principal); margin-bottom: 3px; }
-  .tarjeta-accion .a-desc { font-size: 11px; color: var(--texto-secundario); }
+  .tarjeta-accion .a-titulo { font-size: 0.9286rem; font-weight: bold; color: var(--texto-principal); margin-bottom: 3px; }
+  .tarjeta-accion .a-desc { font-size: 0.7857rem; color: var(--texto-secundario); }
 
   /* SUBIR IMAGENES */
   .zona-carga {
@@ -388,9 +401,9 @@
     margin-bottom: 18px;
   }
   .zona-carga:hover { border-color: var(--acento); background-color: var(--bg-hover); }
-  .zona-carga .flecha { font-size: 36px; color: #c8a97a; margin-bottom: 10px; }
-  .zona-carga h3 { font-size: 14px; color: var(--texto-principal); margin-bottom: 4px; }
-  .zona-carga p { font-size: 11px; color: var(--texto-secundario); }
+  .zona-carga .flecha { font-size: 2.5714rem; color: #c8a97a; margin-bottom: 10px; }
+  .zona-carga h3 { font-size: 1rem; color: var(--texto-principal); margin-bottom: 4px; }
+  .zona-carga p { font-size: 0.7857rem; color: var(--texto-secundario); }
   .zona-carga .enlace { color: var(--acento); text-decoration: underline; }
 
   .grid-previews {
@@ -409,7 +422,7 @@
     justify-content: center;
     position: relative;
     overflow: hidden;
-    font-size: 10px;
+    font-size: 0.7143rem;
     color: var(--texto-secundario);
   }
   .preview-item img { width: 100%; height: 100%; object-fit: cover; }
@@ -420,7 +433,7 @@
     color: #fff;
     width: 18px; height: 18px;
     display: flex; align-items: center; justify-content: center;
-    font-size: 11px;
+    font-size: 0.7857rem;
     cursor: pointer;
     opacity: 0;
   }
@@ -448,7 +461,7 @@
     color: #fff;
     border: none;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 0.9286rem;
     cursor: pointer;
   }
   .btn-analizar:hover { background-color: #8a6440; }
@@ -466,12 +479,12 @@
     justify-content: space-between;
     margin-bottom: 12px;
   }
-  .resultado-nombre { font-size: 13px; font-weight: bold; color: var(--texto-principal); margin-bottom: 3px; }
-  .resultado-meta { font-size: 11px; color: var(--texto-secundario); }
+  .resultado-nombre { font-size: 0.9286rem; font-weight: bold; color: var(--texto-principal); margin-bottom: 3px; }
+  .resultado-meta { font-size: 0.7857rem; color: var(--texto-secundario); }
 
   .badge {
     padding: 3px 10px;
-    font-size: 11px;
+    font-size: 0.7857rem;
     font-weight: bold;
   }
   .badge-normal { background-color: #d4e8c2; color: #3a6020; }
@@ -488,7 +501,7 @@
     margin-bottom: 12px;
     overflow: hidden;
     color: var(--texto-terciario);
-    font-size: 11px;
+    font-size: 0.7857rem;
   }
   .resultado-img img { width: 100%; height: 100%; object-fit: cover; }
 
@@ -497,7 +510,7 @@
     padding: 3px 10px;
     background-color: var(--bg-tag);
     border: 1px solid var(--borde);
-    font-size: 11px;
+    font-size: 0.7857rem;
     color: var(--texto-secundario);
   }
   .tag.activo { background-color: var(--borde); color: var(--texto-principal); font-weight: bold; }
@@ -506,9 +519,9 @@
     text-align: center;
     padding: 50px 20px;
     color: var(--texto-secundario);
-    font-size: 13px;
+    font-size: 0.9286rem;
   }
-  .estado-vacio .icono-vacio { font-size: 40px; margin-bottom: 12px; }
+  .estado-vacio .icono-vacio { font-size: 2.8571rem; margin-bottom: 12px; }
 
   /* CONFIGURACION */
   .config-bloque {
@@ -519,7 +532,7 @@
   .config-bloque-titulo {
     padding: 12px 18px;
     border-bottom: 1px solid var(--borde);
-    font-size: 12px;
+    font-size: 0.8571rem;
     font-weight: bold;
     color: var(--texto-principal);
     text-transform: uppercase;
@@ -534,8 +547,8 @@
     border-bottom: 1px solid var(--borde-suave);
   }
   .config-fila:last-child { border-bottom: none; }
-  .config-label { font-size: 13px; color: var(--texto-principal); }
-  .config-desc { font-size: 11px; color: var(--texto-secundario); margin-top: 2px; }
+  .config-label { font-size: 0.9286rem; color: var(--texto-principal); }
+  .config-desc { font-size: 0.7857rem; color: var(--texto-secundario); margin-top: 2px; }
 
   .toggle {
     width: 40px;
@@ -565,12 +578,12 @@
     border: 1px solid var(--borde);
     color: var(--texto-principal);
     cursor: pointer;
-    font-size: 16px;
+    font-size: 1.1429rem;
     display: flex; align-items: center; justify-content: center;
     font-family: inherit;
   }
   .btn-fuente:hover { background-color: var(--borde-suave); }
-  .val-fuente { font-size: 13px; font-weight: bold; min-width: 28px; text-align: center; }
+  .val-fuente { font-size: 0.9286rem; font-weight: bold; min-width: 28px; text-align: center; }
 
   .avatar-config { display: flex; align-items: center; gap: 12px; }
   .avatar-grande {
@@ -578,7 +591,7 @@
     border-radius: 50%;
     background-color: #c8a97a;
     display: flex; align-items: center; justify-content: center;
-    font-size: 20px; font-weight: bold; color: #fff;
+    font-size: 1.4286rem; font-weight: bold; color: #fff;
     overflow: hidden;
   }
   .avatar-grande img { width: 100%; height: 100%; object-fit: cover; }
@@ -589,7 +602,7 @@
     border: 1px solid var(--borde);
     color: var(--texto-secundario);
     font-family: inherit;
-    font-size: 12px;
+    font-size: 0.8571rem;
     cursor: pointer;
   }
   .btn-secundario:hover { background-color: var(--bg-tag); border-color: var(--acento); color: var(--texto-principal); }
@@ -601,7 +614,7 @@
     background-color: var(--texto-principal);
     color: var(--bg-panel);
     padding: 10px 18px;
-    font-size: 12px;
+    font-size: 0.8571rem;
     opacity: 0;
     transition: opacity 0.3s;
     pointer-events: none;
@@ -640,8 +653,8 @@
   border-left: 4px solid var(--acento);
   padding: 14px 16px;
 }
-.tarjeta-stat .stat-valor { font-size: 24px; font-weight: bold; color: var(--texto-principal); line-height: 1.2; }
-.tarjeta-stat .stat-label { font-size: 11px; color: var(--texto-secundario); margin-top: 4px; }
+.tarjeta-stat .stat-valor { font-size: 1.7143rem; font-weight: bold; color: var(--texto-principal); line-height: 1.2; }
+.tarjeta-stat .stat-label { font-size: 0.7857rem; color: var(--texto-secundario); margin-top: 4px; }
 .tarjeta-stat.stat-normal { border-left-color: #6a9048; }
 .tarjeta-stat.stat-revisar { border-left-color: #b98a20; }
 .tarjeta-stat.stat-positivo { border-left-color: #a03828; }
@@ -663,10 +676,10 @@
 }
 .tarjeta-cancer .cancer-icono { width: 40px; height: 40px; }
 .tarjeta-cancer .cancer-icono svg { width: 100%; height: 100%; }
-.tarjeta-cancer .cancer-nombre { font-size: 13px; font-weight: bold; color: var(--texto-principal); }
-.tarjeta-cancer .cancer-desc { font-size: 11.5px; color: var(--texto-secundario); line-height: 1.5; }
+.tarjeta-cancer .cancer-nombre { font-size: 0.9286rem; font-weight: bold; color: var(--texto-principal); }
+.tarjeta-cancer .cancer-desc { font-size: 0.8214rem; color: var(--texto-secundario); line-height: 1.5; }
 .nota-informativa {
-  font-size: 11px;
+  font-size: 0.7857rem;
   color: var(--texto-terciario);
   font-style: italic;
   margin: 10px 0 24px;
@@ -688,7 +701,7 @@
   border: 1px solid var(--borde);
   background-color: var(--bg-input);
   color: var(--texto-principal);
-  font-size: 13px;
+  font-size: 0.9286rem;
   font-family: inherit;
   outline: none;
 }
@@ -698,8 +711,8 @@
 /* ---- TARJETA DE EXPEDIENTE CLICKEABLE (pantalla Expedientes) ---- */
 .tarjeta-resultado.clickeable { cursor: pointer; transition: border-color 0.15s, transform 0.1s; }
 .tarjeta-resultado.clickeable:hover { border-color: var(--acento); }
-.expediente-codigo { font-size: 10px; color: var(--texto-terciario); text-transform: uppercase; letter-spacing: 0.5px; }
-.expediente-doctor { font-size: 10px; color: var(--texto-secundario); margin-top: 2px; }
+.expediente-codigo { font-size: 0.7143rem; color: var(--texto-terciario); text-transform: uppercase; letter-spacing: 0.5px; }
+.expediente-doctor { font-size: 0.7143rem; color: var(--texto-secundario); margin-top: 2px; }
 
 /* ---- BUSCADOR DE EXPEDIENTES ---- */
 .input-buscar {
@@ -708,7 +721,7 @@
   background-color: var(--bg-input);
   color: var(--texto-principal);
   font-family: inherit;
-  font-size: 12px;
+  font-size: 0.8571rem;
   width: 260px;
   outline: none;
 }
@@ -743,8 +756,8 @@
   position: sticky;
   top: 0;
 }
-.modal-header h2 { font-size: 15px; font-weight: normal; color: var(--texto-principal); }
-.modal-cerrar { cursor: pointer; font-size: 20px; color: var(--texto-secundario); line-height: 1; }
+.modal-header h2 { font-size: 1.0714rem; font-weight: normal; color: var(--texto-principal); }
+.modal-cerrar { cursor: pointer; font-size: 1.4286rem; color: var(--texto-secundario); line-height: 1; }
 .modal-cerrar:hover { color: var(--texto-principal); }
 .modal-body { padding: 18px 20px; }
 
@@ -759,7 +772,7 @@
   overflow: hidden;
   margin-bottom: 14px;
   color: var(--texto-terciario);
-  font-size: 12px;
+  font-size: 0.8571rem;
 }
 .expediente-imagen-grande img { width: 100%; height: 100%; object-fit: contain; }
 
@@ -781,7 +794,7 @@
 }
 
 .mensaje-correo-estado {
-  font-size: 11px;
+  font-size: 0.7857rem;
   padding: 6px 10px;
   margin: 10px 0;
   border-left: 3px solid var(--acento);
@@ -845,8 +858,8 @@
   border: 1px solid var(--borde);
   padding: 12px 16px;
 }
-.rectangulo-tipo .tipo-nombre { font-size: 13px; font-weight: bold; color: var(--texto-principal); margin-bottom: 4px; }
-.rectangulo-tipo .tipo-desc-larga { font-size: 11.5px; color: var(--texto-secundario); line-height: 1.5; }
+.rectangulo-tipo .tipo-nombre { font-size: 0.9286rem; font-weight: bold; color: var(--texto-principal); margin-bottom: 4px; }
+.rectangulo-tipo .tipo-desc-larga { font-size: 0.8214rem; color: var(--texto-secundario); line-height: 1.5; }
 
 @media (max-width: 650px) {
   /* En pantallas chicas el zigzag se colapsa: siempre circulo arriba,
